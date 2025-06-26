@@ -1,0 +1,29 @@
+/* src/components/Dashboard/styles/buttons.css */
+
+/* — Button Styles — */
+.ant-btn-primary {
+  background: #007bff;
+  border-color: #007bff;
+}
+.ant-btn-primary:hover {
+  background: #0056b3;
+  border-color: #0056b3;
+}
+
+.ant-btn-danger {
+  background: #dc3545;
+  border-color: #dc3545;
+}
+.ant-btn-danger:hover {
+  background: #a71d2a;
+  border-color: #a71d2a;
+}
+
+/* — Action Buttons — */
+.dash-action-btn {
+  margin-left: 12px;
+  border-radius: 4px;
+  width: 48px;
+  height: 48px;
+  font-size: 1.25rem;
+}

@@ -1,0 +1,12 @@
+.dash-modal .ant-modal-content {
+  border-radius: 12px;
+  overflow: hidden;
+}
+.dash-modal .ant-modal-body {
+  max-height: 80vh;
+  overflow-y: auto;
+}
+.modal-title {
+  color: #1890ff !important;
+  margin: 0 !important;
+}

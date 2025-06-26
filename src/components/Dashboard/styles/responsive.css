@@ -1,0 +1,17 @@
+/* Responsive tweaks */
+@media (max-width: 768px) {
+  .dash-header .ant-row > .ant-col:first-child {
+    width: 100%;
+  }
+  .dash-header .ant-row > .ant-col:last-child {
+    margin-top: 16px;
+    text-align: center;
+    width: 100%;
+  }
+}
+
+/* Make modal scrollable on smaller screens too */
+.dash-modal .ant-modal-body {
+  max-height: 80vh;
+  overflow-y: auto;
+}
