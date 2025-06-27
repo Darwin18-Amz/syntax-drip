@@ -1,7 +1,8 @@
+// src/components/Dashboard/modals/AuthModal.jsx
 import React from 'react';
 import { Modal, Form, Input, Button, Space } from 'antd';
 
-const AuthModal = ({ open, onCancel, form, onFinish }) => {
+export default function AuthModal({ open, onCancel, onAuthFinish, form }) {
   return (
     <Modal
       title="Re-enter Password"
@@ -9,15 +10,14 @@ const AuthModal = ({ open, onCancel, form, onFinish }) => {
       onCancel={onCancel}
       footer={null}
     >
-      <Form form={form} layout="vertical" onFinish={onFinish}>
+      <Form form={form} layout="vertical" onFinish={onAuthFinish}>
         <Form.Item
           name="password"
           label="Current Password"
-          rules={[{ required: true, message: 'Password is required' }]}
+          rules={[{ required: true, message: 'Please enter your password' }]}
         >
-          <Input.Password />
+          <Input.Password placeholder="Enter your current password" />
         </Form.Item>
-
         <Form.Item>
           <Space style={{ width: '100%', justifyContent: 'flex-end' }}>
             <Button onClick={onCancel}>Cancel</Button>
@@ -29,6 +29,4 @@ const AuthModal = ({ open, onCancel, form, onFinish }) => {
       </Form>
     </Modal>
   );
-};
-
-export default AuthModal;
+}

@@ -1,13 +1,13 @@
-
+// src/components/Dashboard/layout/DashboardContent.jsx
 import React from 'react';
-import { Row, Col, Typography } from 'antd';
-import ProfileCard from '../tiles/ProfileCard';
+import { Layout, Row, Col, Card, Typography } from 'antd';
 
-const { Text } = Typography;
+const { Content } = Layout;
+const { Title, Text } = Typography;
 
-const DashboardContent = ({ profiles, onCardClick, onSearch }) => {
+export default function DashboardContent({ profiles, onView }) {
   return (
-    <>
+    <Content style={{ padding: '24px' }}>
       <Row gutter={[16, 16]}>
         {profiles.length === 0 ? (
           <Col span={24}>
@@ -16,13 +16,17 @@ const DashboardContent = ({ profiles, onCardClick, onSearch }) => {
         ) : (
           profiles.map((profile) => (
             <Col key={profile.id} xs={24} sm={12} md={8}>
-              <ProfileCard profile={profile} onClick={() => onCardClick(profile)} />
+              <Card
+                hoverable
+                onDoubleClick={() => onView(profile)}
+              >
+                <Title level={4}>{profile.name}</Title>
+                <Text>{profile.email}</Text>
+              </Card>
             </Col>
           ))
         )}
       </Row>
-    </>
+    </Content>
   );
-};
-
-export default DashboardContent;
+}

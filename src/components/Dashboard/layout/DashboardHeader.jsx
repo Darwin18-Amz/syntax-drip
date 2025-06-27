@@ -1,51 +1,41 @@
-
+// src/components/Dashboard/layout/DashboardHeader.jsx
 import React from 'react';
-import { Row, Col, Button, Input, Space, Typography } from 'antd';
+import { Layout, Row, Col, Typography, Input, Button, Space } from 'antd';
 import { PlusOutlined, LogoutOutlined } from '@ant-design/icons';
-import { signOut } from 'firebase/auth';
-import { useNavigate } from 'react-router-dom';
-import { auth } from '../../../utils/firebase';
-import '../../../components/Dashboard/styles/layout.css';
 
+const { Header } = Layout;
 const { Title } = Typography;
 
-const DashboardHeader = ({ onAdd }) => {
-  const navigate = useNavigate();
-
-  const logout = async () => {
-    await signOut(auth);
-    navigate('/login');
-  };
-
+export default function DashboardHeader({ onSearch, onAdd, onLogout }) {
   return (
-    <Row justify="space-between" align="middle">
-      <Col>
-        <Title level={3}>Syntax Drip</Title>
-        <Input.Search
-          placeholder="Search profiles..."
-          style={{ width: 300, marginTop: 8 }}
-          allowClear
-          onChange={(e) => onAdd('search', e.target.value)}
-        />
-      </Col>
-      <Col>
-        <Space>
-          <Button
-            type="primary"
-            icon={<PlusOutlined />}
-            size="large"
-            onClick={() => onAdd(null)}
+    <Header className="dash-header">
+      <Row justify="space-between" align="middle">
+        <Col>
+          <Title level={3}>Syntax Drip</Title>
+          <Input.Search
+            placeholder="Search profiles..."
+            onChange={onSearch}
+            style={{ width: 300, marginTop: 8 }}
+            allowClear
           />
-          <Button
-            danger
-            icon={<LogoutOutlined />}
-            size="large"
-            onClick={logout}
-          />
-        </Space>
-      </Col>
-    </Row>
+        </Col>
+        <Col>
+          <Space>
+            <Button
+              type="primary"
+              icon={<PlusOutlined />}
+              size="large"
+              onClick={onAdd}
+            />
+            <Button
+              danger
+              icon={<LogoutOutlined />}
+              size="large"
+              onClick={onLogout}
+            />
+          </Space>
+        </Col>
+      </Row>
+    </Header>
   );
-};
-
-export default DashboardHeader;
+}

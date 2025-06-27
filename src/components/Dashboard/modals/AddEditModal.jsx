@@ -1,40 +1,50 @@
+// src/components/Dashboard/modals/AddEditModal.jsx
 import React from 'react';
-import { Modal } from 'antd';
+import { Modal, Form } from 'antd';
 import AddEditForm from '../forms/AddEditForm';
 
-const AddEditModal = ({
+export default function AddEditModal({
   open,
   onCancel,
-  form,
-  onFinish,
+  onSubmit,
   initialValues,
-  options,
-  onValuesChange,
-  setModalVisible,
-}) => {
+  isEditing,
+  form,
+  genderOptions,
+  collegeOptions,
+  stateOptions,
+}) {
   return (
     <Modal
-      title={initialValues ? 'Edit Profile' : 'Add Profile'}
+      title={isEditing ? 'Edit Student' : 'Add Student'}
       open={open}
       onCancel={onCancel}
-      footer={null}
-      width={800}
-      bodyStyle={{ maxHeight: '70vh', overflowY: 'auto' }}
+      onOk={() => {
+        form
+          .validateFields()
+          .then((values) => {
+            onSubmit(values);
+          })
+          .catch((info) => {
+            console.log('Validation Failed:', info);
+          });
+      }}
+      width={900}
+      destroyOnClose
+      okText={isEditing ? 'Update' : 'Add'}
+      bodyStyle={{ maxHeight: '70vh', overflowY: 'auto', padding: '2rem' }}
     >
-      <AddEditForm
+      <Form
         form={form}
-        onFinish={onFinish}
-        onValuesChange={onValuesChange}
+        layout="vertical"
         initialValues={initialValues}
-        genderOptions={options.genderOptions}
-        collegeOptions={options.collegeOptions}
-        stateOptions={options.stateOptions}
-        knowUsOptions={options.knowUsOptions}
-        projectTypeOptions={options.projectTypeOptions}
-        setModalVisible={setModalVisible}
-      />
+      >
+        <AddEditForm
+          genderOptions={genderOptions}
+          collegeOptions={collegeOptions}
+          stateOptions={stateOptions}
+        />
+      </Form>
     </Modal>
   );
-};
-
-export default AddEditModal;
+}

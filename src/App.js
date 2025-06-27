@@ -1,7 +1,7 @@
 import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom';
 import Login from './components/Auth/login/Login';
 import Signup from './components/Auth/signUp/Signup';
-import Dashboard from './components/Dashboard/Dashboard';
+import DashboardLayout from './components/Dashboard/layout/DashboardLayout'; // ✅ updated import
 
 function App() {
   return (
@@ -9,7 +9,7 @@ function App() {
       <Routes>
         <Route path="/login" element={<Login />} />
         <Route path="/signup" element={<Signup />} />
-        <Route path="/dashboard" element={<Dashboard />} />
+        <Route path="/dashboard" element={<DashboardLayout />} /> {/* ✅ updated route */}
         <Route path="*" element={<Navigate to="/login" replace />} />
       </Routes>
     </Router>

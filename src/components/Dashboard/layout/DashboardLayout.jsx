@@ -1,140 +1,105 @@
-import React, { useEffect, useState } from 'react';
-import { Button, Card, Col, Row, message } from 'antd';
-import { collection, getDocs, addDoc, doc, updateDoc } from 'firebase/firestore';
+import React, { useEffect, useState, useCallback } from 'react';
+import { Button, Table, Modal, Form, message } from 'antd';
+import { PlusOutlined } from '@ant-design/icons';
+import { collection, addDoc, getDocs } from 'firebase/firestore';
 import { db } from '../../../utils/firebase';
 import AddEditForm from '../forms/AddEditForm';
-import { extractFormValues } from '../../../utils/extractFormValues';
-import { prepareFirestorePayload } from '../../../utils/prepareFirestorePayload';
-import './dashboardLayout.css';
+import SubmitSection from '../forms/SubmitSection';
 
-const DashboardLayout = () => {
+
+export default function DashboardLayout() {
+  const [isModalVisible, setIsModalVisible] = useState(false);
+  const [form] = Form.useForm();
   const [profiles, setProfiles] = useState([]);
-  const [modalOpen, setModalOpen] = useState(false);
-  const [selectedProfile, setSelectedProfile] = useState(null);
-  const [setLoading] = useState(false);
+  const [collegeOptions, setCollegeOptions] = useState([]);
+  const [stateOptions, setStateOptions] = useState([]);
 
-  const genderOptions = [
-    { label: 'Male', value: 'male' },
-    { label: 'Female', value: 'female' },
-    { label: 'Others', value: 'others' }
-  ];
-
-  const stateOptions = [
-    'Tamil Nadu', 'Kerala', 'Karnataka', 'Andhra Pradesh'
-  ].map(state => ({ label: state, value: state }));
-
-  const collegeOptions = [
-    'IIT Madras', 'Anna University', 'NIT Trichy'
-  ].map(college => ({ label: college, value: college }));
-
-  const knowUsOptions = [
-    { label: 'Friend', value: 'friend' },
-    { label: 'Instagram', value: 'social' },
-    { label: 'College Drive', value: 'college' },
-    { label: 'Other', value: 'other' }
-  ];
-
-  const projectTypeOptions = [
-    { label: 'Mini Project', value: 'mini' },
-    { label: 'Major Project', value: 'major' }
-  ];
-
-  const options = {
-    genderOptions,
-    stateOptions,
-    collegeOptions,
-    knowUsOptions,
-    projectTypeOptions
+  const showModal = () => {
+    setIsModalVisible(true);
   };
 
-  const fetchProfiles = async () => {
-    setLoading(true);
-    try {
-      const snapshot = await getDocs(collection(db, 'profiles'));
-      const data = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
-      setProfiles(data);
-    } catch (err) {
-      message.error('Failed to fetch profiles');
-    }
-    setLoading(false);
+  const handleCancel = () => {
+    setIsModalVisible(false);
+    form.resetFields();
   };
 
-//   useEffect(() => {
-//     fetchProfiles();
-//   }, []);
+  const fetchLookups = useCallback(async () => {
+    const docSnap = await getDocs(collection(db, 'lookups'));
+    docSnap.forEach(doc => {
+      const data = doc.data();
+      setCollegeOptions(data.colleges || []);
+      setStateOptions(data.states || []);
+    });
+  }, []);
+
+  const fetchProfiles = useCallback(async () => {
+    const snapshot = await getDocs(collection(db, 'profiles'));
+    const data = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
+    setProfiles(data);
+  }, []);
+
   useEffect(() => {
+    fetchLookups();
     fetchProfiles();
-  }, [fetchProfiles]);
+  }, [fetchLookups, fetchProfiles]);
 
-
-  const handleSubmit = async (values) => {
-    const payload = prepareFirestorePayload(values);
-
+  const onFinish = async (values) => {
     try {
-      if (selectedProfile) {
-        const ref = doc(db, 'profiles', selectedProfile.id);
-        await updateDoc(ref, payload);
-        message.success('Profile updated!');
-      } else {
-        await addDoc(collection(db, 'profiles'), payload);
-        message.success('Profile added!');
-      }
-      setModalOpen(false);
-      setSelectedProfile(null);
+      await addDoc(collection(db, 'profiles'), values);
+      message.success('Profile added successfully');
+      setIsModalVisible(false);
+      form.resetFields();
       fetchProfiles();
     } catch (err) {
-      console.error(err);
-      message.error('Failed to save profile');
+      message.error('Error adding profile');
     }
   };
 
+  const columns = [
+    { title: 'Name', dataIndex: 'name' },
+    { title: 'Email', dataIndex: 'email' },
+    { title: 'Phone', dataIndex: 'phone' },
+    { title: 'College', dataIndex: 'collegeName' },
+    { title: 'Department', dataIndex: 'department' },
+    // Add other columns as needed
+  ];
+
   return (
-    <div className="dashboard-layout">
-      <div className="dashboard-header">
-        <h2>Student Profiles</h2>
-        <Button type="primary" onClick={() => {
-          setSelectedProfile(null);
-          setModalOpen(true);
-        }}>
-          Add Profile
+    <div style={{ padding: '2rem' }}>
+      <div style={{ marginBottom: '1rem', display: 'flex', justifyContent: 'flex-end' }}>
+        <Button
+          type="primary"
+          icon={<PlusOutlined />}
+          onClick={showModal}
+        >
+          Add Student
         </Button>
       </div>
 
-      <Row gutter={[16, 16]}>
-        {profiles.map((profile) => (
-          <Col key={profile.id} xs={24} sm={12} md={8}>
-            <Card
-              title={profile.name}
-              actions={[
-                <Button type="link" onClick={() => {
-                  const values = extractFormValues(profile, genderOptions);
-                  setSelectedProfile(values);
-                  setModalOpen(true);
-                }}>
-                  Edit
-                </Button>
-              ]}
-            >
-              <p><strong>Email:</strong> {profile.email}</p>
-              <p><strong>Phone:</strong> {profile.phone}</p>
-              <p><strong>College:</strong> {profile.college}</p>
-            </Card>
-          </Col>
-        ))}
-      </Row>
-
-      <AddEditForm
-        open={modalOpen}
-        onClose={() => {
-          setModalOpen(false);
-          setSelectedProfile(null);
-        }}
-        onSubmit={handleSubmit}
-        profile={selectedProfile}
-        options={options}
+      <Table
+        columns={columns}
+        dataSource={profiles}
+        rowKey="id"
+        pagination={{ pageSize: 5 }}
       />
+
+      <Modal
+        title="Add Student"
+        open={isModalVisible}
+        onCancel={handleCancel}
+        footer={null}
+        destroyOnClose
+        width={800}
+      >
+        <Form form={form} layout="vertical" onFinish={onFinish}>
+          <AddEditForm
+            form={form}
+            stateOptions={stateOptions}
+            collegeOptions={collegeOptions}
+          />
+          <SubmitSection onCancel={handleCancel} />
+        </Form>
+      </Modal>
     </div>
   );
-};
-
-export default DashboardLayout;
+}

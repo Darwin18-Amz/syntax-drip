@@ -2,14 +2,10 @@ import React from 'react';
 import { Row, Col, Form, Input, Select, Radio } from 'antd';
 
 const { Option } = Select;
-const { TextArea } = Input;
 
-const ProjectSection = ({ form, options }) => {
-  const { projectTypeOptions } = options;
-
+export default function ProjectSection() {
   return (
     <>
-      <h3>Projects</h3>
       <Row gutter={16}>
         <Col span={8}>
           <Form.Item
@@ -24,12 +20,20 @@ const ProjectSection = ({ form, options }) => {
           <Form.Item
             name="projectType"
             label="Type"
-            rules={[{ required: true }]}
+            rules={[{ required: true, message: 'Select project type' }]}
           >
-            <Select placeholder="Select project type">
-              {projectTypeOptions.map(t => (
-                <Option key={t.value}>{t.label}</Option>
-              ))}
+            <Select
+              showSearch
+              placeholder="Select project type"
+              optionFilterProp="children"
+              filterOption={(input, option) =>
+                option.children.toLowerCase().includes(input.toLowerCase())
+              }
+            >
+              <Option value="final_year">Final Year Project</Option>
+              <Option value="mini">Mini Project</Option>
+              <Option value="internship">Internship Project</Option>
+              <Option value="other">Other</Option>
             </Select>
           </Form.Item>
         </Col>
@@ -41,15 +45,21 @@ const ProjectSection = ({ form, options }) => {
             </Radio.Group>
           </Form.Item>
         </Col>
+
         <Form.Item
           noStyle
-          shouldUpdate={(prev, cur) => prev.requirements !== cur.requirements}
+          shouldUpdate={(prev, cur) =>
+            prev.requirements !== cur.requirements
+          }
         >
           {({ getFieldValue }) =>
-            getFieldValue("requirements") === "yes" ? (
+            getFieldValue('requirements') === 'yes' ? (
               <Col span={24}>
-                <Form.Item name="customRequirements" label="Custom Requirements">
-                  <TextArea rows={2} />
+                <Form.Item
+                  name="customRequirements"
+                  label="Custom Requirements"
+                >
+                  <Input.TextArea rows={2} />
                 </Form.Item>
               </Col>
             ) : null
@@ -58,6 +68,4 @@ const ProjectSection = ({ form, options }) => {
       </Row>
     </>
   );
-};
-
-export default ProjectSection;
+}

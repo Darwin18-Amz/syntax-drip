@@ -3,13 +3,19 @@ import { Card, Typography } from 'antd';
 
 const { Title, Text } = Typography;
 
-const ProfileCard = ({ profile, onClick }) => {
+export default function ProfileCard({ profile, onDoubleClick }) {
   return (
-    <Card hoverable onClick={onClick}>
-      <Title level={4}>{profile.name}</Title>
-      <Text>{profile.email}</Text>
+    <Card
+      hoverable
+      onDoubleClick={() => onDoubleClick(profile)}
+      className="profile-card"
+    >
+      <Title level={4} className="profile-name">
+        {profile.name}
+      </Title>
+      <Text type="secondary" className="profile-email">
+        {profile.email}
+      </Text>
     </Card>
   );
-};
-
-export default ProfileCard;
+}
