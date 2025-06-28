@@ -4,102 +4,156 @@ import { Row, Col, Form, Input, Select, DatePicker, Checkbox } from 'antd';
 const { Option } = Select;
 
 export default function PersonalSection({ form, stateOptions, collegeOptions }) {
+  const handlePhoneChange = (e) => {
+    const phone = e.target.value.replace(/\D/g, '');
+    form.setFieldsValue({ phone });
+    if (form.getFieldValue('useSame')) {
+      form.setFieldsValue({ whatsapp: phone });
+    }
+  };
+
+  const handleWhatsAppChange = (e) => {
+    const whatsapp = e.target.value.replace(/\D/g, '');
+    form.setFieldsValue({ whatsapp });
+  };
+
+  const handleUseSameChange = (e) => {
+    if (e.target.checked) {
+      form.setFieldsValue({ whatsapp: form.getFieldValue('phone') });
+    }
+  };
+
   return (
     <Row gutter={16}>
       <Col span={8}>
         <Form.Item
-          name="name"
+          name="Name"
           label="Name"
-          rules={[{ required: true }]}
+          rules={[{ required: true}]}
         >
           <Input />
         </Form.Item>
       </Col>
+
       <Col span={8}>
         <Form.Item
-          name="email"
+          name="Email ID"
           label="Email ID"
-          rules={[{ type: 'email' }]}
+          rules={[{ required: true}]}
         >
           <Input />
         </Form.Item>
       </Col>
+
       <Col span={8}>
         <Form.Item
-          name="phone"
+          name="Phone Number"
           label="Phone Number"
-          rules={[{ required: true }]}
+          rules={[
+            { required: true},
+            { pattern: /^\d{10}$/, message: 'Number must be 10 digits (0–9)' },
+          ]}
         >
-          <Input />
+          <Input maxLength={10} onChange={handlePhoneChange} />
         </Form.Item>
+
         <Form.Item name="useSame" valuePropName="checked">
-          <Checkbox>Same as WhatsApp</Checkbox>
+          <Checkbox onChange={handleUseSameChange}>Same as WhatsApp</Checkbox>
         </Form.Item>
       </Col>
+
       <Col span={8}>
-        <Form.Item
-          name="whatsapp"
-          label="WhatsApp Number"
-          rules={[{ required: true }]}
-        >
-          <Input disabled={form.getFieldValue('useSame')} />
+        <Form.Item shouldUpdate>
+          {({ getFieldValue }) => (
+            <Form.Item
+              name="WhatsApp Number"
+              label="WhatsApp Number"
+              rules={[
+                { required: true},
+                { pattern: /^\d{10}$/, message: 'Number must be 10 digits (0–9)' },
+              ]}
+            >
+              <Input
+                maxLength={10}
+                disabled={getFieldValue('useSame')}
+                onChange={handleWhatsAppChange}
+              />
+            </Form.Item>
+          )}
         </Form.Item>
       </Col>
+
       <Col span={8}>
         <Form.Item
-          name="dob"
+          name="DOB"
           label="DOB"
-          rules={[{ required: true }]}
+          rules={[{ required: true}]}
         >
-          <DatePicker style={{ width: '100%' }} />
+          <DatePicker style={{ width: '100%' }} format="DD/MM/YYYY" />
         </Form.Item>
       </Col>
+
+     <Col span={8}>
+       <Form.Item name="Gender" label="Gender" rules={[{ required: true }]}>
+         <Select
+           mode="tags"
+           maxTagCount={1}
+           style={{ width: '100%' }}
+           placeholder="Type or select"
+           dropdownMatchSelectWidth={false}
+           tokenSeparators={[","]}
+           optionFilterProp="value"
+           filterOption={(input, option) =>
+             option?.value?.toLowerCase().includes(input.toLowerCase())
+           }
+           onChange={(value) => {
+             if (value.length > 1) {
+               form.setFieldsValue({ gender: [value[value.length - 1]] });
+             }
+           }}
+           tagRender={({ label }) => (
+             <span style={{ padding: '4px 8px', background: '#ffffff', borderRadius: 4 }}>
+               {label}
+             </span>
+           )}
+         >
+           {["Male", "Female", "Other", "Prefer Not To Say"].map((gender) => (
+             <Option key={gender} value={gender}>
+               {gender}
+             </Option>
+           ))}
+         </Select>
+       </Form.Item>
+     </Col>
+
+
       <Col span={8}>
-        <Form.Item
-          name="gender"
-          label="Gender"
-          rules={[{ required: true, message: 'Select gender' }]}
-        >
-          <Select placeholder="Select gender">
-            <Option value="male">Male</Option>
-            <Option value="female">Female</Option>
-            <Option value="others">Others</Option>
-          </Select>
-        </Form.Item>
-        <Form.Item noStyle shouldUpdate={(prev, cur) => prev.gender !== cur.gender}>
-          {({ getFieldValue }) =>
-            getFieldValue('gender') === 'others' ? (
-              <Form.Item
-                name="genderCustom"
-                label="Please specify"
-                rules={[{ required: true, message: 'Enter custom gender' }]}
-              >
-                <Input />
-              </Form.Item>
-            ) : null
-          }
-        </Form.Item>
-      </Col>
-      <Col span={8}>
-        <Form.Item
-          name="collegeName"
-          label="College Name"
-          rules={[{ required: true }]}
-        >
+        <Form.Item name="collegeName" label="College Name" rules={[{ required: true }]}>
           <Select
             mode="tags"
-            showSearch
+            maxTagCount={1}
             style={{ width: '100%' }}
             placeholder="Type or select"
             dropdownMatchSelectWidth={false}
+            tokenSeparators={[","]}
             optionFilterProp="value"
-            filterOption={(input, option) => {
-              const normalize = str =>
-                String(str).toLowerCase().replace(/[^a-z0-9]/g, '');
-              return normalize(option?.value).includes(normalize(input));
+            showSearch
+            filterOption={(input, option) =>
+              option?.value?.toLowerCase().includes(input.toLowerCase())
+            }
+            value={form.getFieldValue('collegeName') || []}
+            onChange={(value) => {
+              // Always keep only the last selected or typed value
+              const last = value[value.length - 1];
+              form.setFieldsValue({ collegeName: [last] });
             }}
+            tagRender={({ label }) => (
+              <span style={{ padding: '4px 8px', background: '#ffffff', borderRadius: 4 }}>
+                {label}
+              </span>
+            )}
           >
-            {collegeOptions.map(c => (
+            {collegeOptions.map((c) => (
               <Option key={c} value={c}>
                 <div style={{ whiteSpace: 'normal', wordWrap: 'break-word' }}>{c}</div>
               </Option>
@@ -107,69 +161,471 @@ export default function PersonalSection({ form, stateOptions, collegeOptions }) 
           </Select>
         </Form.Item>
       </Col>
+
+
       <Col span={8}>
-        <Form.Item name="collegeLocation" label="College Location">
+        <Form.Item
+          name="College Location"
+          label="College Location"
+          rules={[{ required: true}]}
+        >
           <Input />
         </Form.Item>
       </Col>
+
       <Col span={8}>
-        <Form.Item name="department" label="Department">
-          <Input />
-        </Form.Item>
+      <Form.Item name="Education Level" label="Education Level" rules={[{ required: true }]}>
+        <Select
+          mode="tags"
+          maxTagCount={1}
+          style={{ width: '100%' }}
+          placeholder="Type or select"
+          dropdownMatchSelectWidth={false}
+          tokenSeparators={[","]}
+          optionFilterProp="value"
+          filterOption={(input, option) =>
+            option?.value?.toLowerCase().includes(input.toLowerCase())
+          }
+          onChange={(value) => {
+            if (value.length > 1) {
+              form.setFieldsValue({ "Education Level": [value[value.length - 1]] });
+            }
+          }}
+          tagRender={({ label }) => (
+            <span style={{ padding: '4px 8px', background: '#ffffff', borderRadius: 4 }}>
+              {label}
+            </span>
+          )}
+        >
+          {["Under Graduate", "Post Graduate", "Integrated Course"].map(level => (
+            <Option key={level} value={level}>{level}</Option>
+          ))}
+        </Select>
+      </Form.Item>
+
       </Col>
+
+     <Col span={8}>
+
+      <Form.Item name="Course / Department" label="Course / Department" rules={[{ required: true }]}>
+        <Select
+          mode="tags"
+          maxTagCount={1}
+          style={{ width: '100%' }}
+          placeholder="Type or select"
+          dropdownMatchSelectWidth={false}
+          tokenSeparators={[","]}
+          optionFilterProp="value"
+          filterOption={(input, option) =>
+            option?.value?.toLowerCase().includes(input.toLowerCase())
+          }
+          onChange={(value) => {
+            if (value.length > 1) {
+              form.setFieldsValue({ "Course / Department": [value[value.length - 1]] });
+            }
+          }}
+          tagRender={({ label }) => (
+            <span style={{ padding: '4px 8px', background: '#ffffff', borderRadius: 4 }}>
+              {label}
+            </span>
+          )}
+        >
+          {["B.Tech", "B.E"].map(course => (
+            <Option key={course} value={course}>{course}</Option>
+          ))}
+        </Select>
+      </Form.Item>
+
+
+      </Col>
+
+    <Col span={8}>
+      <Form.Item name="Year" label="Year" rules={[{ required: true }]}>
+        <Select
+          mode="tags"
+          maxTagCount={1}
+          style={{ width: '100%' }}
+          placeholder="Type or select"
+          dropdownMatchSelectWidth={false}
+          tokenSeparators={[","]}
+          optionFilterProp="value"
+          filterOption={(input, option) =>
+            option?.value?.toLowerCase().includes(input.toLowerCase())
+          }
+          onChange={(value) => {
+            if (value.length > 1) {
+              form.setFieldsValue({ Year: [value[value.length - 1]] });
+            }
+          }}
+          tagRender={({ label }) => (
+            <span style={{ padding: '4px 8px', background: '#ffffff', borderRadius: 4 }}>
+              {label}
+            </span>
+          )}
+        >
+          {["1", "2", "3", "4", "5"].map(year => (
+            <Option key={year} value={year}>{year}</Option>
+          ))}
+        </Select>
+      </Form.Item>
+
+
+    </Col>
+
+
+     <Col span={8}>
+         <Form.Item name="Know Us From" label="Know us from" rules={[{ required: true }]}>
+            <Select
+              mode="tags"
+              maxTagCount={1}
+              style={{ width: '100%' }}
+              placeholder="Type or select"
+              dropdownMatchSelectWidth={false}
+              tokenSeparators={[","]}
+              optionFilterProp="value"
+              filterOption={(input, option) =>
+                option?.value?.toLowerCase().includes(input.toLowerCase())
+              }
+              onChange={(value) => {
+                if (value.length > 1) {
+                  form.setFieldsValue({ "Know Us From": [value[value.length - 1]] });
+                }
+              }}
+              tagRender={({ label }) => (
+                <span style={{ padding: '4px 8px', background: '#ffffff', borderRadius: 4 }}>
+                  {label}
+                </span>
+              )}
+            >
+              {["Friend", "Social Media", "College", "Other"].map(source => (
+                <Option key={source} value={source}>{source}</Option>
+              ))}
+            </Select>
+          </Form.Item>
+      </Col>
+
+     <Col span={8}>
+         <Form.Item name="City" label="City" rules={[{ required: true }]}>
+           <Select
+             mode="tags"
+             maxTagCount={1}
+             style={{ width: '100%' }}
+             placeholder="Type or select"
+             dropdownMatchSelectWidth={false}
+             tokenSeparators={[","]}
+             optionFilterProp="value"
+             filterOption={(input, option) =>
+               option?.value?.toLowerCase().includes(input.toLowerCase())
+             }
+             onChange={(value) => {
+               if (value.length > 1) {
+                 form.setFieldsValue({ City: [value[value.length - 1]] });
+               }
+             }}
+             tagRender={({ label }) => (
+               <span style={{ padding: '4px 8px', background: '#ffffff', borderRadius: 4 }}>
+                 {label}
+               </span>
+             )}
+           >
+             {[
+               "Chennai", "Coimbatore", "Madurai", "Tiruchirappalli", "Salem", "Tirunelveli", "Tiruppur",
+               "Vellore", "Erode", "Thoothukudi", "Dindigul", "Thanjavur", "Ranipet", "Sivakasi", "Karur",
+               "Nagercoil", "Kanchipuram", "Kumbakonam", "Cuddalore", "Hosur", "Ambur", "Pudukkottai",
+               "Nagapattinam", "Udhagamandalam (Ooty)", "Ariyalur", "Perambalur", "Viluppuram", "Tenkasi",
+               "Dharmapuri", "Krishnagiri"
+             ].map(city => (
+               <Option key={city} value={city}>{city}</Option>
+             ))}
+           </Select>
+         </Form.Item>
+
+
+      </Col>
+
       <Col span={8}>
-        <Form.Item name="year" label="Year">
-          <Input />
-        </Form.Item>
-      </Col>
+         <Form.Item name="State" label="State" rules={[{ required: true }]}>
+           <Select
+             mode="tags"
+             maxTagCount={1}
+             style={{ width: '100%' }}
+             placeholder="Type or select"
+             dropdownMatchSelectWidth={false}
+             tokenSeparators={[","]}
+             optionFilterProp="value"
+             filterOption={(input, option) =>
+               option?.value?.toLowerCase().includes(input.toLowerCase())
+             }
+             onChange={(value) => {
+               if (value.length > 1) {
+                 form.setFieldsValue({ State: [value[value.length - 1]] });
+               }
+             }}
+             tagRender={({ label }) => (
+               <span style={{ padding: '4px 8px', background: '#ffffff', borderRadius: 4 }}>
+                 {label}
+               </span>
+             )}
+           >
+             {[
+               "Andhra Pradesh", "Arunachal Pradesh", "Assam", "Bihar", "Chhattisgarh", "Goa", "Gujarat",
+               "Haryana", "Himachal Pradesh", "Jharkhand", "Karnataka", "Kerala", "Madhya Pradesh",
+               "Maharashtra", "Manipur", "Meghalaya", "Mizoram", "Nagaland", "Odisha", "Punjab",
+               "Rajasthan", "Sikkim", "Tamil Nadu", "Telangana", "Tripura", "Uttar Pradesh",
+               "Uttarakhand", "West Bengal", "Andaman and Nicobar Islands", "Chandigarh",
+               "Dadra and Nagar Haveli and Daman and Diu", "Delhi", "Jammu and Kashmir", "Ladakh",
+               "Lakshadweep", "Puducherry"
+             ].map(state => (
+               <Option key={state} value={state}>{state}</Option>
+             ))}
+           </Select>
+         </Form.Item>
+
+
+    </Col>
+
+    <Col span={8}>
+
+      <Form.Item name="Country" label="Country" rules={[{ required: true }]}>
+        <Select
+          mode="tags"
+          maxTagCount={1}
+          style={{ width: '100%' }}
+          placeholder="Type or select"
+          dropdownMatchSelectWidth={false}
+          tokenSeparators={[","]}
+          optionFilterProp="value"
+          filterOption={(input, option) =>
+            option?.value?.toLowerCase().includes(input.toLowerCase())
+          }
+          onChange={(value) => {
+            if (value.length > 1) {
+              form.setFieldsValue({ Country: [value[value.length - 1]] });
+            }
+          }}
+          tagRender={({ label }) => (
+            <span style={{ padding: '4px 8px', background: '#ffffff', borderRadius: 4 }}>
+              {label}
+            </span>
+          )}
+        >
+          <Option value="Abkhazia">Abkhazia</Option>
+          <Option value="Afghanistan">Afghanistan</Option>
+          <Option value="Albania">Albania</Option>
+          <Option value="Algeria">Algeria</Option>
+          <Option value="Andorra">Andorra</Option>
+          <Option value="Angola">Angola</Option>
+          <Option value="Antigua and Barbuda">Antigua and Barbuda</Option>
+          <Option value="Argentina">Argentina</Option>
+          <Option value="Armenia">Armenia</Option>
+          <Option value="Australia">Australia</Option>
+          <Option value="Austria">Austria</Option>
+          <Option value="Azerbaijan">Azerbaijan</Option>
+          <Option value="Bahamas">Bahamas</Option>
+          <Option value="Bahrain">Bahrain</Option>
+          <Option value="Bangladesh">Bangladesh</Option>
+          <Option value="Barbados">Barbados</Option>
+          <Option value="Belarus">Belarus</Option>
+          <Option value="Belgium">Belgium</Option>
+          <Option value="Belize">Belize</Option>
+          <Option value="Benin">Benin</Option>
+          <Option value="Bhutan">Bhutan</Option>
+          <Option value="Bolivia">Bolivia</Option>
+          <Option value="Bosnia and Herzegovina">Bosnia and Herzegovina</Option>
+          <Option value="Botswana">Botswana</Option>
+          <Option value="Brazil">Brazil</Option>
+          <Option value="Brunei">Brunei</Option>
+          <Option value="Bulgaria">Bulgaria</Option>
+          <Option value="Burkina Faso">Burkina Faso</Option>
+          <Option value="Burundi">Burundi</Option>
+          <Option value="Cabo Verde">Cabo Verde</Option>
+          <Option value="Cambodia">Cambodia</Option>
+          <Option value="Cameroon">Cameroon</Option>
+          <Option value="Canada">Canada</Option>
+          <Option value="Central African Republic">Central African Republic</Option>
+          <Option value="Chad">Chad</Option>
+          <Option value="Chile">Chile</Option>
+          <Option value="China">China</Option>
+          <Option value="Colombia">Colombia</Option>
+          <Option value="Comoros">Comoros</Option>
+          <Option value="Congo (Congo-Brazzaville)">Congo (Congo-Brazzaville)</Option>
+          <Option value="Cook Islands">Cook Islands</Option>
+          <Option value="Costa Rica">Costa Rica</Option>
+          <Option value="Croatia">Croatia</Option>
+          <Option value="Cuba">Cuba</Option>
+          <Option value="Cyprus">Cyprus</Option>
+          <Option value="Czech Republic">Czech Republic</Option>
+          <Option value="Democratic Republic of the Congo">Democratic Republic of the Congo</Option>
+          <Option value="Denmark">Denmark</Option>
+          <Option value="Djibouti">Djibouti</Option>
+          <Option value="Dominica">Dominica</Option>
+          <Option value="Dominican Republic">Dominican Republic</Option>
+          <Option value="Ecuador">Ecuador</Option>
+          <Option value="Egypt">Egypt</Option>
+          <Option value="El Salvador">El Salvador</Option>
+          <Option value="Equatorial Guinea">Equatorial Guinea</Option>
+          <Option value="Eritrea">Eritrea</Option>
+          <Option value="Estonia">Estonia</Option>
+          <Option value="Eswatini">Eswatini</Option>
+          <Option value="Ethiopia">Ethiopia</Option>
+          <Option value="Fiji">Fiji</Option>
+          <Option value="Finland">Finland</Option>
+          <Option value="France">France</Option>
+          <Option value="Gabon">Gabon</Option>
+          <Option value="Gambia">Gambia</Option>
+          <Option value="Georgia">Georgia</Option>
+          <Option value="Germany">Germany</Option>
+          <Option value="Ghana">Ghana</Option>
+          <Option value="Greece">Greece</Option>
+          <Option value="Grenada">Grenada</Option>
+          <Option value="Guatemala">Guatemala</Option>
+          <Option value="Guinea">Guinea</Option>
+          <Option value="Guinea-Bissau">Guinea-Bissau</Option>
+          <Option value="Guyana">Guyana</Option>
+          <Option value="Haiti">Haiti</Option>
+          <Option value="Honduras">Honduras</Option>
+          <Option value="Hungary">Hungary</Option>
+          <Option value="Iceland">Iceland</Option>
+          <Option value="India">India</Option>
+          <Option value="Indonesia">Indonesia</Option>
+          <Option value="Iran">Iran</Option>
+          <Option value="Iraq">Iraq</Option>
+          <Option value="Ireland">Ireland</Option>
+          <Option value="Israel">Israel</Option>
+          <Option value="Italy">Italy</Option>
+          <Option value="Ivory Coast">Ivory Coast</Option>
+          <Option value="Jamaica">Jamaica</Option>
+          <Option value="Japan">Japan</Option>
+          <Option value="Jordan">Jordan</Option>
+          <Option value="Kazakhstan">Kazakhstan</Option>
+          <Option value="Kenya">Kenya</Option>
+          <Option value="Kiribati">Kiribati</Option>
+          <Option value="Kosovo">Kosovo</Option>
+          <Option value="Kuwait">Kuwait</Option>
+          <Option value="Kyrgyzstan">Kyrgyzstan</Option>
+          <Option value="Laos">Laos</Option>
+          <Option value="Latvia">Latvia</Option>
+          <Option value="Lebanon">Lebanon</Option>
+          <Option value="Lesotho">Lesotho</Option>
+          <Option value="Liberia">Liberia</Option>
+          <Option value="Libya">Libya</Option>
+          <Option value="Liechtenstein">Liechtenstein</Option>
+          <Option value="Lithuania">Lithuania</Option>
+          <Option value="Luxembourg">Luxembourg</Option>
+          <Option value="Madagascar">Madagascar</Option>
+          <Option value="Malawi">Malawi</Option>
+          <Option value="Malaysia">Malaysia</Option>
+          <Option value="Maldives">Maldives</Option>
+          <Option value="Mali">Mali</Option>
+          <Option value="Malta">Malta</Option>
+          <Option value="Marshall Islands">Marshall Islands</Option>
+          <Option value="Mauritania">Mauritania</Option>
+          <Option value="Mauritius">Mauritius</Option>
+          <Option value="Mexico">Mexico</Option>
+          <Option value="Micronesia">Micronesia</Option>
+          <Option value="Moldova">Moldova</Option>
+          <Option value="Monaco">Monaco</Option>
+          <Option value="Mongolia">Mongolia</Option>
+          <Option value="Montenegro">Montenegro</Option>
+          <Option value="Morocco">Morocco</Option>
+          <Option value="Mozambique">Mozambique</Option>
+          <Option value="Myanmar">Myanmar</Option>
+          <Option value="Namibia">Namibia</Option>
+          <Option value="Nauru">Nauru</Option>
+          <Option value="Nepal">Nepal</Option>
+          <Option value="Netherlands">Netherlands</Option>
+          <Option value="New Zealand">New Zealand</Option>
+          <Option value="Nicaragua">Nicaragua</Option>
+          <Option value="Niger">Niger</Option>
+          <Option value="Nigeria">Nigeria</Option>
+          <Option value="Niue">Niue</Option>
+          <Option value="North Korea">North Korea</Option>
+          <Option value="North Macedonia">North Macedonia</Option>
+          <Option value="Northern Cyprus">Northern Cyprus</Option>
+          <Option value="Norway">Norway</Option>
+          <Option value="Oman">Oman</Option>
+          <Option value="Pakistan">Pakistan</Option>
+          <Option value="Palau">Palau</Option>
+          <Option value="Palestine">Palestine</Option>
+          <Option value="Panama">Panama</Option>
+          <Option value="Papua New Guinea">Papua New Guinea</Option>
+          <Option value="Paraguay">Paraguay</Option>
+          <Option value="Peru">Peru</Option>
+          <Option value="Philippines">Philippines</Option>
+          <Option value="Poland">Poland</Option>
+          <Option value="Portugal">Portugal</Option>
+          <Option value="Qatar">Qatar</Option>
+          <Option value="Republic of the Congo">Republic of the Congo</Option>
+          <Option value="Romania">Romania</Option>
+          <Option value="Russia">Russia</Option>
+          <Option value="Rwanda">Rwanda</Option>
+          <Option value="Saint Kitts and Nevis">Saint Kitts and Nevis</Option>
+          <Option value="Saint Lucia">Saint Lucia</Option>
+          <Option value="Saint Vincent and the Grenadines">Saint Vincent and the Grenadines</Option>
+          <Option value="Samoa">Samoa</Option>
+          <Option value="San Marino">San Marino</Option>
+          <Option value="Sao Tome and Principe">Sao Tome and Principe</Option>
+          <Option value="Saudi Arabia">Saudi Arabia</Option>
+          <Option value="Senegal">Senegal</Option>
+          <Option value="Serbia">Serbia</Option>
+          <Option value="Seychelles">Seychelles</Option>
+          <Option value="Sierra Leone">Sierra Leone</Option>
+          <Option value="Singapore">Singapore</Option>
+          <Option value="Slovakia">Slovakia</Option>
+          <Option value="Slovenia">Slovenia</Option>
+          <Option value="Solomon Islands">Solomon Islands</Option>
+          <Option value="Somalia">Somalia</Option>
+          <Option value="Somaliland">Somaliland</Option>
+          <Option value="South Africa">South Africa</Option>
+          <Option value="South Korea">South Korea</Option>
+          <Option value="South Ossetia">South Ossetia</Option>
+          <Option value="South Sudan">South Sudan</Option>
+          <Option value="Spain">Spain</Option>
+          <Option value="Sri Lanka">Sri Lanka</Option>
+          <Option value="Sudan">Sudan</Option>
+          <Option value="Suriname">Suriname</Option>
+          <Option value="Sweden">Sweden</Option>
+          <Option value="Switzerland">Switzerland</Option>
+          <Option value="Syria">Syria</Option>
+          <Option value="Taiwan">Taiwan</Option>
+          <Option value="Tajikistan">Tajikistan</Option>
+          <Option value="Tanzania">Tanzania</Option>
+          <Option value="Thailand">Thailand</Option>
+          <Option value="Timor-Leste">Timor-Leste</Option>
+          <Option value="Togo">Togo</Option>
+          <Option value="Tonga">Tonga</Option>
+          <Option value="Transnistria">Transnistria</Option>
+          <Option value="Trinidad and Tobago">Trinidad and Tobago</Option>
+          <Option value="Tunisia">Tunisia</Option>
+          <Option value="Turkey">Turkey</Option>
+          <Option value="Turkmenistan">Turkmenistan</Option>
+          <Option value="Tuvalu">Tuvalu</Option>
+          <Option value="Uganda">Uganda</Option>
+          <Option value="Ukraine">Ukraine</Option>
+          <Option value="United Arab Emirates">United Arab Emirates</Option>
+          <Option value="United Kingdom">United Kingdom</Option>
+          <Option value="United States">United States</Option>
+          <Option value="Uruguay">Uruguay</Option>
+          <Option value="Uzbekistan">Uzbekistan</Option>
+          <Option value="Vanuatu">Vanuatu</Option>
+          <Option value="Vatican City">Vatican City</Option>
+          <Option value="Venezuela">Venezuela</Option>
+          <Option value="Vietnam">Vietnam</Option>
+          <Option value="Western Sahara">Western Sahara</Option>
+          <Option value="Yemen">Yemen</Option>
+          <Option value="Zambia">Zambia</Option>
+          <Option value="Zimbabwe">Zimbabwe</Option>
+        </Select>
+      </Form.Item>
+    </Col>
+
       <Col span={16}>
-        <Form.Item name="address" label="Address">
-          <Input.TextArea rows={2} />
-        </Form.Item>
+          <Form.Item name="Address" label="Address"
+          rules = {[{required: true}]}>
+              <Input.TextArea rows={2} />
+          </Form.Item>
       </Col>
-      <Col span={8}>
-        <Form.Item name="city" label="City">
-          <Input />
-        </Form.Item>
-      </Col>
-      <Col span={8}>
-        <Form.Item name="state" label="State">
-          <Select
-            showSearch
-            placeholder="Select state"
-            optionFilterProp="children"
-            filterOption={(input, opt) =>
-              opt.children.toLowerCase().includes(input.toLowerCase())
-            }
-          >
-            {stateOptions.map(s => (
-              <Option key={s}>{s}</Option>
-            ))}
-          </Select>
-        </Form.Item>
-      </Col>
-      <Col span={8}>
-        <Form.Item name="country" label="Country">
-          <Input />
-        </Form.Item>
-      </Col>
-      <Col span={8}>
-        <Form.Item name="knowUs" label="Know us from">
-          <Select
-            showSearch
-            placeholder=""
-            optionFilterProp="children"
-            filterOption={(input, opt) =>
-              opt.children.toLowerCase().includes(input.toLowerCase())
-            }
-          >
-            <Option value="friend">Friend</Option>
-            <Option value="social_media">Social Media</Option>
-            <Option value="college">College</Option>
-            <Option value="other">Other</Option>
-          </Select>
-        </Form.Item>
-      </Col>
+
     </Row>
   );
 }

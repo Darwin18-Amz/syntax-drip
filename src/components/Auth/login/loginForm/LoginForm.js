@@ -22,7 +22,6 @@ const LoginForm = () => {
     setError('');
     try {
       await handleLogin(input, password);
-      alert('Login successful');
       navigate('/dashboard'); // ✅ Redirect to dashboard
     } catch (err) {
       setError(err.message);
@@ -36,7 +35,7 @@ const LoginForm = () => {
 
         <input
           type="text"
-          placeholder="Username or Email"
+          placeholder="Email"
           className="auth-input modern-input"
           value={input}
           onChange={(e) => setInput(e.target.value)}
