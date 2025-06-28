@@ -1,8 +1,10 @@
 import React from 'react';
-import { Row, Col, Form, Input, Select, DatePicker, Checkbox } from 'antd';
+import { Row, Col, Form, Input, Select, DatePicker } from 'antd';
+
 
 const { Option } = Select;
 const countryCodes = ["+91", "+1", "+44", "+61", "+81", "+49", "+33", "+86", "+7", "+973", /* add more */];
+
 
 export default function PersonalSection({ form, stateOptions, collegeOptions }) {
 
@@ -83,8 +85,6 @@ export default function PersonalSection({ form, stateOptions, collegeOptions }) 
     </Input.Group>
   </Form.Item>
 </Col>
-
-
 
     <Col span={8}>
       <Form.Item label="WhatsApp Number" required style={{ marginBottom: 0 }}>
