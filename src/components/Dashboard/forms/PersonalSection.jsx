@@ -5,24 +5,6 @@ const { Option } = Select;
 const countryCodes = ["+91", "+1", "+44", "+61", "+81", "+49", "+33", "+86", "+7", "+973", /* add more */];
 
 export default function PersonalSection({ form, stateOptions, collegeOptions }) {
-//   const handlePhoneChange = (e) => {
-//     const phone = e.target.value.replace(/\D/g, '');
-//     form.setFieldsValue({ phone });
-//     if (form.getFieldValue('useSame')) {
-//       form.setFieldsValue({ whatsapp: phone });
-//     }
-//   };
-//
-//   const handleWhatsAppChange = (e) => {
-//     const whatsapp = e.target.value.replace(/\D/g, '');
-//     form.setFieldsValue({ whatsapp });
-//   };
-//
-//   const handleUseSameChange = (e) => {
-//     if (e.target.checked) {
-//       form.setFieldsValue({ whatsapp: form.getFieldValue('phone') });
-//     }
-//   };
 
   return (
     <Row gutter={16}>
@@ -46,131 +28,155 @@ export default function PersonalSection({ form, stateOptions, collegeOptions }) 
         </Form.Item>
       </Col>
 
-     <Col span={8}>
-       <Form.Item
-         label="Phone Number"
-         required
-         style={{ marginBottom: 0 }}
-       >
-         {/* Validation Message */}
-         <Form.Item
-           name="Phone Number"
-           rules={[
-             { required: true, message: 'Phone number is required' },
-             { pattern: /^\d{10}$/, message: 'Number must be exactly 10 digits' },
-           ]}
-           style={{ marginBottom: 8 }}
-         >
-           <Input.Group compact>
-             {/* Country Code Visible in Input Box */}
-             <Form.Item
-               name="phoneCountryCode"
-               noStyle
-               initialValue="+91"
-             >
-               <Select
-                 style={{ width: '32%' }}
-                 dropdownMatchSelectWidth={false}
-                 showSearch
-               >
-                 {countryCodes.map(code => (
-                   <Option key={code} value={code}>
-                     {code}
-                   </Option>
-                 ))}
-               </Select>
-             </Form.Item>
+<Col span={8}>
+  <Form.Item label="Phone Number" required style={{ marginBottom: 0 }}>
+    <Input.Group compact>
+      {/* Country Code Selector */}
+      <Form.Item
+        name="phoneCountryCode"
+        noStyle
+        initialValue="+91"
+      >
+        <Select
+          style={{ width: '32%' }}
+          dropdownMatchSelectWidth={false}
+          showSearch
+        >
+          {countryCodes.map(code => (
+            <Option key={code} value={code}>
+              {code}
+            </Option>
+          ))}
+        </Select>
+      </Form.Item>
 
-             <Input
-               style={{ width: '68%' }}
-               maxLength={10}
-               inputMode="numeric"
-               value={form.getFieldValue("Phone Number")}
-               onChange={(e) => {
-                 const digitsOnly = e.target.value.replace(/\D/g, '');
-                 form.setFieldsValue({ "Phone Number": digitsOnly });
+      {/* Phone Number Input */}
+      <Form.Item
+        name="Phone Number"
+        rules={[
+          { required: true},
+          { pattern: /^\d{10}$/, message: 'Number must be exactly 10 digits' },
+        ]}
+        noStyle
+      >
+        <Input
+          style={{ width: '68%' }}
+          maxLength={10}
+          inputMode="numeric"
+          value={form.getFieldValue("Phone Number")}
+          onChange={(e) => {
+            const digitsOnly = e.target.value.replace(/\D/g, '');
+            form.setFieldsValue({ "Phone Number": digitsOnly });
 
-                 if (form.getFieldValue('useSame')) {
-                   const fullPhone = `${form.getFieldValue('phoneCountryCode')}${digitsOnly}`;
-                   form.setFieldsValue({ whatsappNumber: fullPhone });
-                 }
-               }}
-               onKeyDown={(e) => {
-                 const allowedKeys = [
-                   'Backspace', 'Delete', 'ArrowLeft', 'ArrowRight', 'Tab'
-                 ];
-                 const isNumberKey = /^[0-9]$/.test(e.key);
-                 if (!isNumberKey && !allowedKeys.includes(e.key)) {
-                   e.preventDefault();
-                 }
-               }}
-               onPaste={(e) => {
-                 const pasted = e.clipboardData.getData('text');
-                 if (!/^\d+$/.test(pasted)) {
-                   e.preventDefault();
-                 }
-               }}
-             />
+            if (form.getFieldValue('useSame')) {
+              const fullPhone = digitsOnly;
+              form.setFieldsValue({ "Whatsapp Number": fullPhone });
+            }
+          }}
+          onKeyDown={(e) => {
+            const allowedKeys = ['Backspace', 'Delete', 'ArrowLeft', 'ArrowRight', 'Tab'];
+            const isNumberKey = /^[0-9]$/.test(e.key);
+            if (!isNumberKey && !allowedKeys.includes(e.key)) {
+              e.preventDefault();
+            }
+          }}
+          onPaste={(e) => {
+            const pasted = e.clipboardData.getData('text');
+            if (!/^\d+$/.test(pasted)) {
+              e.preventDefault();
+            }
+          }}
+        />
+      </Form.Item>
+    </Input.Group>
+  </Form.Item>
 
-           </Input.Group>
-         </Form.Item>
+  {/* Checkbox: Same as WhatsApp */}
+  <Form.Item name="useSame" valuePropName="checked">
+    <Checkbox
+      onChange={(e) => {
+        const checked = e.target.checked;
+        const phone = form.getFieldValue("Phone Number") || '';
+        const code = form.getFieldValue("phoneCountryCode") || '+91';
 
-         {/* Same as WhatsApp checkbox */}
-         <Form.Item
-           name="useSame"
-           valuePropName="checked"
-           style={{ marginTop: 4 }}
-         >
-           <Checkbox
-             onChange={(e) => {
-               if (e.target.checked) {
-                 const full = `${form.getFieldValue('phoneCountryCode')}${form.getFieldValue('Phone Number')}`;
-                 form.setFieldsValue({ whatsappNumber: full });
-               }
-             }}
-           >
-             Same as WhatsApp Number
-           </Checkbox>
-         </Form.Item>
-       </Form.Item>
-     </Col>
+        if (checked) {
+          form.setFieldsValue({
+            "Whatsapp Number": phone,
+            "whatsappCountryCode": code
+          });
+        }
+      }}
+    >
+      Same as WhatsApp Number
+    </Checkbox>
+  </Form.Item>
+</Col>
 
 
-
-      <Col span={8}>
-        <Form.Item label="WhatsApp Number" required>
-          <Input.Group compact>
-            <Form.Item name="whatsappCountryCode" noStyle initialValue="+91">
-              <Select
-                style={{ width: '25%' }}
-                disabled={form.getFieldValue('useSame')}
+    <Col span={8}>
+      <Form.Item label="WhatsApp Number" required style={{ marginBottom: 0 }}>
+        <Form.Item
+          shouldUpdate={(prev, cur) => prev.useSame !== cur.useSame}
+          noStyle
+        >
+          {({ getFieldValue }) => (
+            <Input.Group compact>
+              <Form.Item
+                name="whatsappCountryCode"
+                noStyle
+                initialValue="+91"
               >
-                {countryCodes.map(code => (
-                  <Option key={code} value={code}>{code}</Option>
-                ))}
-              </Select>
-            </Form.Item>
-            <Form.Item
-              name="Whatsapp Number"
-              noStyle
-              rules={[
-                { required: true},
-                { pattern: /^\d{10}$/, message: 'Number Must be 10 digits' },
-              ]}
-            >
-              <Input
-                maxLength={10}
-                style={{ width: '75%' }}
-                disabled={form.getFieldValue('useSame')}
-                onChange={(e) => {
-                  const whatsapp = e.target.value.replace(/\D/g, '');
-                  form.setFieldsValue({ whatsappNumber: whatsapp });
-                }}
-              />
-            </Form.Item>
-          </Input.Group>
+                <Select
+                  style={{ width: '32%' }}
+                  disabled={getFieldValue('useSame')}
+                  dropdownMatchSelectWidth={false}
+                  showSearch
+                >
+                  {countryCodes.map(code => (
+                    <Option key={code} value={code}>
+                      {code}
+                    </Option>
+                  ))}
+                </Select>
+              </Form.Item>
+
+              <Form.Item
+                name="Whatsapp Number"
+                noStyle
+                rules={[
+                  { required: true },
+                  { pattern: /^\d{10}$/, message: 'Number must be exactly 10 digits' },
+                ]}
+              >
+                <Input
+                  maxLength={10}
+                  style={{ width: '68%' }}
+                  disabled={getFieldValue('useSame')}
+                  inputMode="numeric"
+                  onChange={(e) => {
+                    const value = e.target.value.replace(/\D/g, '');
+                    form.setFieldsValue({ "Whatsapp Number": value });
+                  }}
+                  onKeyDown={(e) => {
+                    const allowedKeys = ['Backspace', 'Delete', 'ArrowLeft', 'ArrowRight', 'Tab'];
+                    if (!/^\d$/.test(e.key) && !allowedKeys.includes(e.key)) {
+                      e.preventDefault();
+                    }
+                  }}
+                  onPaste={(e) => {
+                    const pasted = e.clipboardData.getData('text');
+                    if (!/^\d+$/.test(pasted)) {
+                      e.preventDefault();
+                    }
+                  }}
+                />
+              </Form.Item>
+            </Input.Group>
+          )}
         </Form.Item>
-      </Col>
+      </Form.Item>
+    </Col>
+
 
       <Col span={8}>
         <Form.Item
