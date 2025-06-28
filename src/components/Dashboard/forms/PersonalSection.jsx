@@ -30,35 +30,41 @@ export default function PersonalSection({ form, stateOptions, collegeOptions }) 
 
 <Col span={8}>
   <Form.Item label="Phone Number" required style={{ marginBottom: 0 }}>
-    <Input.Group compact>
-      {/* Country Code Selector */}
-      <Form.Item
-        name="phoneCountryCode"
-        noStyle
-        initialValue="+91"
-      >
-        <Select
-          style={{ width: '32%' }}
-          dropdownMatchSelectWidth={false}
-          showSearch
+    {/* Combined Form.Item with validation and full-width error message */}
+    <Form.Item
+      name="Phone Number"
+      validateTrigger="onChange"
+      rules={[
+        { required: true},
+        {
+          validator: (_, value) =>
+            value && value.length === 10
+              ? Promise.resolve()
+              : Promise.reject(new Error('Number must be exactly 10 digits')),
+        },
+      ]}
+      style={{ marginBottom: 8 }}
+    >
+      {/* Input Group - Country Code + Number */}
+      <Input.Group compact>
+        <Form.Item
+          name="phoneCountryCode"
+          noStyle
+          initialValue="+91"
         >
-          {countryCodes.map(code => (
-            <Option key={code} value={code}>
-              {code}
-            </Option>
-          ))}
-        </Select>
-      </Form.Item>
+          <Select
+            style={{ width: '32%' }}
+            dropdownMatchSelectWidth={false}
+            showSearch
+          >
+            {countryCodes.map(code => (
+              <Option key={code} value={code}>
+                {code}
+              </Option>
+            ))}
+          </Select>
+        </Form.Item>
 
-      {/* Phone Number Input */}
-      <Form.Item
-        name="Phone Number"
-        rules={[
-          { required: true},
-          { pattern: /^\d{10}$/, message: 'Number must be exactly 10 digits' },
-        ]}
-        noStyle
-      >
         <Input
           style={{ width: '68%' }}
           maxLength={10}
@@ -69,8 +75,11 @@ export default function PersonalSection({ form, stateOptions, collegeOptions }) 
             form.setFieldsValue({ "Phone Number": digitsOnly });
 
             if (form.getFieldValue('useSame')) {
-              const fullPhone = digitsOnly;
-              form.setFieldsValue({ "Whatsapp Number": fullPhone });
+              const code = form.getFieldValue("phoneCountryCode") || "+91";
+              form.setFieldsValue({
+                "Whatsapp Number": digitsOnly,
+                "whatsappCountryCode": code
+              });
             }
           }}
           onKeyDown={(e) => {
@@ -87,28 +96,49 @@ export default function PersonalSection({ form, stateOptions, collegeOptions }) 
             }
           }}
         />
-      </Form.Item>
-    </Input.Group>
-  </Form.Item>
+      </Input.Group>
+    </Form.Item>
 
-  {/* Checkbox: Same as WhatsApp */}
-  <Form.Item name="useSame" valuePropName="checked">
-    <Checkbox
-      onChange={(e) => {
-        const checked = e.target.checked;
-        const phone = form.getFieldValue("Phone Number") || '';
-        const code = form.getFieldValue("phoneCountryCode") || '+91';
-
-        if (checked) {
-          form.setFieldsValue({
-            "Whatsapp Number": phone,
-            "whatsappCountryCode": code
-          });
-        }
-      }}
+    {/* WhatsApp hidden validation */}
+    <Form.Item
+      name="Whatsapp Number"
+      hidden
+      rules={[
+        { required: true, message: 'WhatsApp number is required' },
+        { pattern: /^\d{10}$/, message: 'WhatsApp number must be 10 digits' },
+      ]}
     >
-      Same as WhatsApp Number
-    </Checkbox>
+      <Input style={{ display: 'none' }} />
+    </Form.Item>
+
+    {/* Same as WhatsApp Checkbox */}
+    <Form.Item shouldUpdate noStyle>
+      {() => {
+        const phone = form.getFieldValue("Phone Number") || "";
+        const isValidPhone = /^\d{10}$/.test(phone);
+
+        return (
+          <Form.Item name="useSame" valuePropName="checked" style={{ marginTop: 8 }}>
+            <Checkbox
+              disabled={!isValidPhone}
+              onChange={(e) => {
+                const checked = e.target.checked;
+                const code = form.getFieldValue("phoneCountryCode") || "+91";
+
+                if (checked && isValidPhone) {
+                  form.setFieldsValue({
+                    "Whatsapp Number": phone,
+                    "whatsappCountryCode": code
+                  });
+                }
+              }}
+            >
+              Same as WhatsApp Number
+            </Checkbox>
+          </Form.Item>
+        );
+      }}
+    </Form.Item>
   </Form.Item>
 </Col>
 
