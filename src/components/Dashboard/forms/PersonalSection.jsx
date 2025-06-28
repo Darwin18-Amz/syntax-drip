@@ -14,7 +14,7 @@ export default function PersonalSection({ form, stateOptions, collegeOptions }) 
           label="Name"
           rules={[{ required: true}]}
         >
-          <Input />
+           <Input placeholder="Type Name" />
         </Form.Item>
       </Col>
 
@@ -24,7 +24,7 @@ export default function PersonalSection({ form, stateOptions, collegeOptions }) 
           label="Email ID"
           rules={[{ required: true}]}
         >
-          <Input />
+          <Input placeholder="Type Email ID" />
         </Form.Item>
       </Col>
 
@@ -69,6 +69,7 @@ export default function PersonalSection({ form, stateOptions, collegeOptions }) 
           style={{ width: '68%' }}
           maxLength={10}
           inputMode="numeric"
+          placeholder="Type Phone Number"
           value={form.getFieldValue("Phone Number")}
           onChange={(e) => {
             const digitsOnly = e.target.value.replace(/\D/g, '');
@@ -104,7 +105,7 @@ export default function PersonalSection({ form, stateOptions, collegeOptions }) 
       name="Whatsapp Number"
       hidden
       rules={[
-        { required: true, message: 'WhatsApp number is required' },
+        { required: true},
         { pattern: /^\d{10}$/, message: 'WhatsApp number must be 10 digits' },
       ]}
     >
@@ -180,6 +181,7 @@ export default function PersonalSection({ form, stateOptions, collegeOptions }) 
               >
                 <Input
                   maxLength={10}
+                  placeholder="Type WhatsApp No."
                   style={{ width: '68%' }}
                   disabled={getFieldValue('useSame')}
                   inputMode="numeric"
@@ -212,11 +214,16 @@ export default function PersonalSection({ form, stateOptions, collegeOptions }) 
         <Form.Item
           name="DOB"
           label="DOB"
-          rules={[{ required: true}]}
+          rules={[{ required: true }]}
         >
-          <DatePicker style={{ width: '100%' }} format="DD/MM/YYYY" />
+          <DatePicker
+            style={{ width: '100%' }}
+            format="DD/MM/YYYY"
+            placeholder="Type or Select Date"
+          />
         </Form.Item>
       </Col>
+
 
      <Col span={8}>
        <Form.Item name="Gender" label="Gender" rules={[{ required: true }]}>
@@ -224,7 +231,7 @@ export default function PersonalSection({ form, stateOptions, collegeOptions }) 
            mode="tags"
            maxTagCount={1}
            style={{ width: '100%' }}
-           placeholder="Type or select"
+           placeholder="Type or Select Gender"
            dropdownMatchSelectWidth={false}
            tokenSeparators={[","]}
            optionFilterProp="value"
@@ -233,7 +240,7 @@ export default function PersonalSection({ form, stateOptions, collegeOptions }) 
            }
            onChange={(value) => {
              if (value.length > 1) {
-               form.setFieldsValue({ gender: [value[value.length - 1]] });
+               form.setFieldsValue({ Gender: [value[value.length - 1]] }); // ✅ Corrected to match Form.Item name
              }
            }}
            tagRender={({ label }) => (
@@ -251,14 +258,13 @@ export default function PersonalSection({ form, stateOptions, collegeOptions }) 
        </Form.Item>
      </Col>
 
-
       <Col span={8}>
         <Form.Item name="College Name" label="College Name" rules={[{ required: true }]}>
           <Select
             mode="tags"
             maxTagCount={1}
             style={{ width: '100%' }}
-            placeholder="Type or select"
+            placeholder="Type or Select College Name"
             dropdownMatchSelectWidth={false}
             tokenSeparators={[","]}
             optionFilterProp="value"
@@ -268,9 +274,10 @@ export default function PersonalSection({ form, stateOptions, collegeOptions }) 
             }
             value={form.getFieldValue('College Name') || []}
             onChange={(value) => {
-              // Always keep only the last selected or typed value
-              const last = value[value.length - 1];
-              form.setFieldsValue({ collegeName: [last] });
+              if (value.length > 1) {
+                const last = value[value.length - 1];
+                form.setFieldsValue({ 'College Name': [last] }); // ✅ Correct field key
+              }
             }}
             tagRender={({ label }) => (
               <span style={{ padding: '4px 8px', background: '#ffffff', borderRadius: 4 }}>
@@ -292,11 +299,12 @@ export default function PersonalSection({ form, stateOptions, collegeOptions }) 
         <Form.Item
           name="College Location"
           label="College Location"
-          rules={[{ required: true}]}
+          rules={[{ required: true }]}
         >
-          <Input />
+          <Input placeholder="Type College Location" />
         </Form.Item>
       </Col>
+
 
       <Col span={8}>
       <Form.Item name="Education Level" label="Education Level" rules={[{ required: true }]}>
@@ -304,7 +312,7 @@ export default function PersonalSection({ form, stateOptions, collegeOptions }) 
           mode="tags"
           maxTagCount={1}
           style={{ width: '100%' }}
-          placeholder="Type or select"
+          placeholder="Type or Select Edu Level"
           dropdownMatchSelectWidth={false}
           tokenSeparators={[","]}
           optionFilterProp="value"
@@ -337,7 +345,7 @@ export default function PersonalSection({ form, stateOptions, collegeOptions }) 
           mode="tags"
           maxTagCount={1}
           style={{ width: '100%' }}
-          placeholder="Type or select"
+          placeholder="Type or Select Degree"
           dropdownMatchSelectWidth={false}
           tokenSeparators={[","]}
           optionFilterProp="value"
@@ -370,7 +378,7 @@ export default function PersonalSection({ form, stateOptions, collegeOptions }) 
                 mode="tags"
                 maxTagCount={1}
                 style={{ width: '100%' }}
-                placeholder="Type or select"
+                placeholder="Type or Select C / D"
                 dropdownMatchSelectWidth={false}
                 tokenSeparators={[","]}
                 optionFilterProp="value"
@@ -403,7 +411,7 @@ export default function PersonalSection({ form, stateOptions, collegeOptions }) 
           mode="tags"
           maxTagCount={1}
           style={{ width: '100%' }}
-          placeholder="Type or select"
+          placeholder="Type or Select Year"
           dropdownMatchSelectWidth={false}
           tokenSeparators={[","]}
           optionFilterProp="value"
@@ -437,7 +445,7 @@ export default function PersonalSection({ form, stateOptions, collegeOptions }) 
               mode="tags"
               maxTagCount={1}
               style={{ width: '100%' }}
-              placeholder="Type or select"
+              placeholder="Type or Select K Us F"
               dropdownMatchSelectWidth={false}
               tokenSeparators={[","]}
               optionFilterProp="value"
@@ -468,7 +476,7 @@ export default function PersonalSection({ form, stateOptions, collegeOptions }) 
              mode="tags"
              maxTagCount={1}
              style={{ width: '100%' }}
-             placeholder="Type or select"
+             placeholder="Type or Select City"
              dropdownMatchSelectWidth={false}
              tokenSeparators={[","]}
              optionFilterProp="value"
@@ -507,7 +515,7 @@ export default function PersonalSection({ form, stateOptions, collegeOptions }) 
              mode="tags"
              maxTagCount={1}
              style={{ width: '100%' }}
-             placeholder="Type or select"
+             placeholder="Type or Select State"
              dropdownMatchSelectWidth={false}
              tokenSeparators={[","]}
              optionFilterProp="value"
@@ -549,7 +557,7 @@ export default function PersonalSection({ form, stateOptions, collegeOptions }) 
           mode="tags"
           maxTagCount={1}
           style={{ width: '100%' }}
-          placeholder="Type or select"
+          placeholder="Type or Select Country"
           dropdownMatchSelectWidth={false}
           tokenSeparators={[","]}
           optionFilterProp="value"
@@ -780,7 +788,10 @@ export default function PersonalSection({ form, stateOptions, collegeOptions }) 
       <Col span={16}>
           <Form.Item name="Address" label="Address"
           rules = {[{required: true}]}>
-              <Input.TextArea rows={2} />
+              <Input.TextArea rows={2}
+              placeholder="Type Address"
+              style={{ resize: 'none' }} />
+
           </Form.Item>
       </Col>
 

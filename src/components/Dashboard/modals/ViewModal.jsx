@@ -35,7 +35,7 @@ export default function ViewModal({
       bodyStyle={{ maxHeight: '70vh', overflowY: 'auto' }}
     >
       <Form form={form} layout="vertical">
-        <Divider>Personal</Divider>
+        <Divider>Personal Details</Divider>
         <Row gutter={16}>
           <Col span={8}>
             <Form.Item name="name" label="Name">
@@ -128,7 +128,7 @@ export default function ViewModal({
           </Col>
         </Row>
 
-        <Divider>Projects</Divider>
+        <Divider>Project Details</Divider>
         <Row gutter={16}>
           <Col span={8}>
             <Form.Item name="projectName" label="Project Name">
@@ -152,7 +152,7 @@ export default function ViewModal({
           </Col>
         </Row>
 
-        <Divider>Presentation</Divider>
+        <Divider>Complimentary Details </Divider>
         <Row gutter={16}>
           <Col span={8}>
             <Form.Item name="presentation" label="Presentation">

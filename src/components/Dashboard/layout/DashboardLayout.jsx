@@ -5,7 +5,6 @@ import { signOut } from 'firebase/auth';
 import { useNavigate } from 'react-router-dom';
 import { db, auth } from '../../../utils/firebase';
 import AddEditForm from '../forms/AddEditForm';
-import SubmitSection from '../forms/SubmitSection';
 
 export default function DashboardLayout() {
   const [isModalVisible, setIsModalVisible] = useState(false);
@@ -80,11 +79,11 @@ export default function DashboardLayout() {
   };
 
   const columns = [
-    { title: 'Name', dataIndex: 'name' },
-    { title: 'Email', dataIndex: 'email' },
-    { title: 'Phone', dataIndex: 'phone' },
-    { title: 'College', dataIndex: 'collegeName' },
-    { title: 'Department', dataIndex: 'department' },
+//     { title: 'Name', dataIndex: 'name' },
+//     { title: 'Email', dataIndex: 'email' },
+//     { title: 'Phone', dataIndex: 'phone' },
+//     { title: 'College', dataIndex: 'collegeName' },
+//     { title: 'Department', dataIndex: 'department' },
   ];
 
   return (
@@ -144,7 +143,6 @@ export default function DashboardLayout() {
             stateOptions={stateOptions}
             collegeOptions={collegeOptions}
           />
-          <SubmitSection onCancel={handleCancel} />
         </Form>
       </Modal>
     </div>
