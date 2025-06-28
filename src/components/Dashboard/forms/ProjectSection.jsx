@@ -30,7 +30,7 @@ export default function ProjectSection() {
             <Select
               mode="tags"
               maxTagCount={1}
-              placeholder="Type or Select"
+              placeholder="Enter or Select Project Name"
               style={{ width: '100%' }}
               dropdownMatchSelectWidth={false}
               tokenSeparators={[","]}
@@ -67,7 +67,7 @@ export default function ProjectSection() {
               mode="tags"
               maxTagCount={1}
               style={{ width: '100%' }}
-              placeholder="Type or Select"
+              placeholder="Enter or Select Project For"
               dropdownMatchSelectWidth={false}
               tokenSeparators={[","]}
               optionFilterProp="value"

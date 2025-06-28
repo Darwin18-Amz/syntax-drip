@@ -9,7 +9,7 @@ export default function SubmitSection() {
   return (
     <Form.Item>
       <Space style={{ width: '100%', justifyContent: 'flex-end' }}>
-        <Button onClick={handlePrint}>Print</Button>
+        <Button onClick={handlePrint}>Print Receipt</Button>
         <Button type="primary" htmlType="submit">
           Submit
         </Button>
