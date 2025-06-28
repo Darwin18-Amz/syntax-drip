@@ -2,26 +2,27 @@ import React from 'react';
 import { Row, Col, Form, Input, Select, DatePicker, Checkbox } from 'antd';
 
 const { Option } = Select;
+const countryCodes = ["+91", "+1", "+44", "+61", "+81", "+49", "+33", "+86", "+7", "+973", /* add more */];
 
 export default function PersonalSection({ form, stateOptions, collegeOptions }) {
-  const handlePhoneChange = (e) => {
-    const phone = e.target.value.replace(/\D/g, '');
-    form.setFieldsValue({ phone });
-    if (form.getFieldValue('useSame')) {
-      form.setFieldsValue({ whatsapp: phone });
-    }
-  };
-
-  const handleWhatsAppChange = (e) => {
-    const whatsapp = e.target.value.replace(/\D/g, '');
-    form.setFieldsValue({ whatsapp });
-  };
-
-  const handleUseSameChange = (e) => {
-    if (e.target.checked) {
-      form.setFieldsValue({ whatsapp: form.getFieldValue('phone') });
-    }
-  };
+//   const handlePhoneChange = (e) => {
+//     const phone = e.target.value.replace(/\D/g, '');
+//     form.setFieldsValue({ phone });
+//     if (form.getFieldValue('useSame')) {
+//       form.setFieldsValue({ whatsapp: phone });
+//     }
+//   };
+//
+//   const handleWhatsAppChange = (e) => {
+//     const whatsapp = e.target.value.replace(/\D/g, '');
+//     form.setFieldsValue({ whatsapp });
+//   };
+//
+//   const handleUseSameChange = (e) => {
+//     if (e.target.checked) {
+//       form.setFieldsValue({ whatsapp: form.getFieldValue('phone') });
+//     }
+//   };
 
   return (
     <Row gutter={16}>
@@ -45,41 +46,129 @@ export default function PersonalSection({ form, stateOptions, collegeOptions }) 
         </Form.Item>
       </Col>
 
-      <Col span={8}>
-        <Form.Item
-          name="Phone Number"
-          label="Phone Number"
-          rules={[
-            { required: true},
-            { pattern: /^\d{10}$/, message: 'Number must be 10 digits (0–9)' },
-          ]}
-        >
-          <Input maxLength={10} onChange={handlePhoneChange} />
-        </Form.Item>
+     <Col span={8}>
+       <Form.Item
+         label="Phone Number"
+         required
+         style={{ marginBottom: 0 }}
+       >
+         {/* Validation Message */}
+         <Form.Item
+           name="Phone Number"
+           rules={[
+             { required: true, message: 'Phone number is required' },
+             { pattern: /^\d{10}$/, message: 'Number must be exactly 10 digits' },
+           ]}
+           style={{ marginBottom: 8 }}
+         >
+           <Input.Group compact>
+             {/* Country Code Visible in Input Box */}
+             <Form.Item
+               name="phoneCountryCode"
+               noStyle
+               initialValue="+91"
+             >
+               <Select
+                 style={{ width: '32%' }}
+                 dropdownMatchSelectWidth={false}
+                 showSearch
+               >
+                 {countryCodes.map(code => (
+                   <Option key={code} value={code}>
+                     {code}
+                   </Option>
+                 ))}
+               </Select>
+             </Form.Item>
 
-        <Form.Item name="useSame" valuePropName="checked">
-          <Checkbox onChange={handleUseSameChange}>Same as WhatsApp</Checkbox>
-        </Form.Item>
-      </Col>
+             <Input
+               style={{ width: '68%' }}
+               maxLength={10}
+               inputMode="numeric"
+               value={form.getFieldValue("Phone Number")}
+               onChange={(e) => {
+                 const digitsOnly = e.target.value.replace(/\D/g, '');
+                 form.setFieldsValue({ "Phone Number": digitsOnly });
+
+                 if (form.getFieldValue('useSame')) {
+                   const fullPhone = `${form.getFieldValue('phoneCountryCode')}${digitsOnly}`;
+                   form.setFieldsValue({ whatsappNumber: fullPhone });
+                 }
+               }}
+               onKeyDown={(e) => {
+                 const allowedKeys = [
+                   'Backspace', 'Delete', 'ArrowLeft', 'ArrowRight', 'Tab'
+                 ];
+                 const isNumberKey = /^[0-9]$/.test(e.key);
+                 if (!isNumberKey && !allowedKeys.includes(e.key)) {
+                   e.preventDefault();
+                 }
+               }}
+               onPaste={(e) => {
+                 const pasted = e.clipboardData.getData('text');
+                 if (!/^\d+$/.test(pasted)) {
+                   e.preventDefault();
+                 }
+               }}
+             />
+
+           </Input.Group>
+         </Form.Item>
+
+         {/* Same as WhatsApp checkbox */}
+         <Form.Item
+           name="useSame"
+           valuePropName="checked"
+           style={{ marginTop: 4 }}
+         >
+           <Checkbox
+             onChange={(e) => {
+               if (e.target.checked) {
+                 const full = `${form.getFieldValue('phoneCountryCode')}${form.getFieldValue('Phone Number')}`;
+                 form.setFieldsValue({ whatsappNumber: full });
+               }
+             }}
+           >
+             Same as WhatsApp Number
+           </Checkbox>
+         </Form.Item>
+       </Form.Item>
+     </Col>
+
+
 
       <Col span={8}>
-        <Form.Item shouldUpdate>
-          {({ getFieldValue }) => (
+        <Form.Item label="WhatsApp Number" required>
+          <Input.Group compact>
+            <Form.Item name="whatsappCountryCode" noStyle initialValue="+91">
+              <Select
+                style={{ width: '25%' }}
+                disabled={form.getFieldValue('useSame')}
+              >
+                {countryCodes.map(code => (
+                  <Option key={code} value={code}>{code}</Option>
+                ))}
+              </Select>
+            </Form.Item>
             <Form.Item
-              name="WhatsApp Number"
-              label="WhatsApp Number"
+              name="Whatsapp Number"
+              noStyle
               rules={[
                 { required: true},
-                { pattern: /^\d{10}$/, message: 'Number must be 10 digits (0–9)' },
+                { pattern: /^\d{10}$/, message: 'Number Must be 10 digits' },
               ]}
             >
               <Input
                 maxLength={10}
-                disabled={getFieldValue('useSame')}
-                onChange={handleWhatsAppChange}
+                style={{ width: '75%' }}
+                disabled={form.getFieldValue('useSame')}
+                onChange={(e) => {
+                  const whatsapp = e.target.value.replace(/\D/g, '');
+                  form.setFieldsValue({ whatsappNumber: whatsapp });
+                }}
               />
             </Form.Item>
-          )}
+          </Input.Group>
         </Form.Item>
       </Col>
 
@@ -117,7 +206,7 @@ export default function PersonalSection({ form, stateOptions, collegeOptions }) 
              </span>
            )}
          >
-           {["Male", "Female", "Other", "Prefer Not To Say"].map((gender) => (
+           {["Male", "Female", "Prefer Not To Say"].map((gender) => (
              <Option key={gender} value={gender}>
                {gender}
              </Option>
@@ -128,7 +217,7 @@ export default function PersonalSection({ form, stateOptions, collegeOptions }) 
 
 
       <Col span={8}>
-        <Form.Item name="collegeName" label="College Name" rules={[{ required: true }]}>
+        <Form.Item name="College Name" label="College Name" rules={[{ required: true }]}>
           <Select
             mode="tags"
             maxTagCount={1}
@@ -141,7 +230,7 @@ export default function PersonalSection({ form, stateOptions, collegeOptions }) 
             filterOption={(input, option) =>
               option?.value?.toLowerCase().includes(input.toLowerCase())
             }
-            value={form.getFieldValue('collegeName') || []}
+            value={form.getFieldValue('College Name') || []}
             onChange={(value) => {
               // Always keep only the last selected or typed value
               const last = value[value.length - 1];
@@ -207,7 +296,7 @@ export default function PersonalSection({ form, stateOptions, collegeOptions }) 
 
      <Col span={8}>
 
-      <Form.Item name="Course / Department" label="Course / Department" rules={[{ required: true }]}>
+      <Form.Item name="Degree" label="Degree" rules={[{ required: true }]}>
         <Select
           mode="tags"
           maxTagCount={1}
@@ -221,7 +310,7 @@ export default function PersonalSection({ form, stateOptions, collegeOptions }) 
           }
           onChange={(value) => {
             if (value.length > 1) {
-              form.setFieldsValue({ "Course / Department": [value[value.length - 1]] });
+              form.setFieldsValue({ "Degree": [value[value.length - 1]] });
             }
           }}
           tagRender={({ label }) => (
@@ -238,6 +327,39 @@ export default function PersonalSection({ form, stateOptions, collegeOptions }) 
 
 
       </Col>
+      <Col span={8}>
+
+            <Form.Item name="Course / Department" label="Course / Department" rules={[{ required: true }]}>
+              <Select
+                mode="tags"
+                maxTagCount={1}
+                style={{ width: '100%' }}
+                placeholder="Type or select"
+                dropdownMatchSelectWidth={false}
+                tokenSeparators={[","]}
+                optionFilterProp="value"
+                filterOption={(input, option) =>
+                  option?.value?.toLowerCase().includes(input.toLowerCase())
+                }
+                onChange={(value) => {
+                  if (value.length > 1) {
+                    form.setFieldsValue({ "Course / Department": [value[value.length - 1]] });
+                  }
+                }}
+                tagRender={({ label }) => (
+                  <span style={{ padding: '4px 8px', background: '#ffffff', borderRadius: 4 }}>
+                    {label}
+                  </span>
+                )}
+              >
+                {["B.Tech", "B.E"].map(course => (
+                  <Option key={course} value={course}>{course}</Option>
+                ))}
+              </Select>
+            </Form.Item>
+
+
+            </Col>
 
     <Col span={8}>
       <Form.Item name="Year" label="Year" rules={[{ required: true }]}>
