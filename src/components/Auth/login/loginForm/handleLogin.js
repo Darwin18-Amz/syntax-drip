@@ -1,28 +1,18 @@
-import { signInWithEmailAndPassword } from "firebase/auth";
-import { collection, query, where, getDocs } from "firebase/firestore";
-import { auth, db } from "../../../../utils/firebase"; // ✅ update path based on your folder structure
+export const handleLogin = (formData, setError, navigate) => {
+  const { username, password } = formData;
 
-export const handleLogin = async (input, password) => {
-  try {
-    const isEmail = input.includes("@");
-    let emailToUse = input;
+  const DEV_USERNAME = 'syntaxdrip';
+  const DEV_PASSWORD = 'SyntaxDrip@2025';
 
-    if (!isEmail) {
-      // Lookup email using username from Firestore
-      const q = query(collection(db, "users"), where("username", "==", input));
-      const snapshot = await getDocs(q);
-
-      if (snapshot.empty) {
-        throw new Error("Username not found");
-      }
-
-      emailToUse = snapshot.docs[0].data().email;
-    }
-
-    // Proceed with login using email
-    const userCredential = await signInWithEmailAndPassword(auth, emailToUse, password);
-    return userCredential;
-  } catch (error) {
-    throw error;
+  // Validate combinations
+  if (username !== DEV_USERNAME && password !== DEV_PASSWORD) {
+    setError('Username and Password is wrong');
+  } else if (username !== DEV_USERNAME) {
+    setError('Username is wrong');
+  } else if (password !== DEV_PASSWORD) {
+    setError('Password is wrong');
+  } else {
+    localStorage.setItem('isLoggedIn', 'true');
+    navigate('/dashboard');
   }
 };
