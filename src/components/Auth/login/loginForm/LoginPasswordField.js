@@ -1,23 +1,41 @@
-// src/components/Auth/login/loginForm/LoginPasswordField.js
 import React, { useState } from 'react';
 import { FaEye, FaEyeSlash } from 'react-icons/fa';
-import '../../style/input.css';
-import '../../style/password.css';
 
-const LoginPasswordField = ({ formData, setFormData }) => {
-  const [showPass, setShowPass] = useState(false);
+
+const LoginPasswordField = ({ value, onChange }) => {
+  const [showPassword, setShowPassword] = useState(false);
 
   return (
-    <div className="password-field">
+    <div style={{ position: 'relative', width: '100%' }}>
       <input
-        type={showPass ? 'text' : 'password'}
+        type={showPassword ? 'text' : 'password'}
+        name="password"
         placeholder="Password"
-        value={formData.password}
-        onChange={(e) => setFormData({ ...formData, password: e.target.value })}
+        value={value}
+        onChange={onChange}
         required
+        style={{
+          width: '100%',
+          padding: '1rem',
+          fontSize: '1.2rem', // increased font size
+          borderRadius: '8px',
+          border: '1px solid #ccc',
+          marginBottom: '1.5rem',
+          boxSizing: 'border-box'
+        }}
       />
-      <span className="eye-icon" onClick={() => setShowPass(!showPass)}>
-        {showPass ? <FaEyeSlash /> : <FaEye />}
+      <span
+        onClick={() => setShowPassword((prev) => !prev)}
+        style={{
+          position: 'absolute',
+          right: '1rem',
+          top: '40%',
+          transform: 'translateY(-50%)',
+          cursor: 'pointer',
+          fontSize: '1.3rem'
+        }}
+      >
+        {showPassword ? <FaEye/> : <FaEyeSlash/>}
       </span>
     </div>
   );
