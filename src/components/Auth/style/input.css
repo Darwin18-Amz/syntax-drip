@@ -1,0 +1,18 @@
+.auth-input.modern-input,
+.auth-password-input.modern-input {
+  width: 100%;
+  padding: 1.2rem;
+  margin-bottom: 1.2rem;
+  border: 1px solid #ccc;
+  border-radius: 10px;
+  background-color: white;
+  font-size: 1.1rem;
+  outline: none;
+  transition: border-color 0.3s ease;
+  box-sizing: border-box;
+}
+
+.auth-input.modern-input:focus,
+.auth-password-input.modern-input:focus {
+  border-color: #6c63ff;
+}
