@@ -60,12 +60,16 @@ export default function DashboardLayout() {
 
   const onFinish = async (values) => {
     try {
+      console.log('Form values:', values); // ✅ Log to verify data
+
       await addDoc(collection(db, 'profiles'), values);
+
       message.success('Profile added successfully');
       setIsModalVisible(false);
       form.resetFields();
       fetchProfiles();
     } catch (err) {
+      console.error('❌ Firestore Add Error:', err); // ✅ See what went wrong
       message.error('Error adding profile');
     }
   };

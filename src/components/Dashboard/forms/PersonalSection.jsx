@@ -1,9 +1,7 @@
 import React from 'react';
 import { Row, Col, Form, Input, Select, DatePicker} from 'antd';
-
 const { Option } = Select;
 const countryCodes = ["+91", "+1", "+44", "+61", "+81", "+49", "+33", "+86", "+7", "+973", /* add more */];
-
 
 export default function PersonalSection({ form, stateOptions, collegeOptions, degreeOptions = [], departmentOptions }) {
 
@@ -248,20 +246,20 @@ export default function PersonalSection({ form, stateOptions, collegeOptions, de
       <Form.Item name="Education Level" label="Education Level" rules={[{ required: true }]}>
         <Select
           mode="tags"
-          maxTagCount={1}
-          style={{ width: '100%' }}
-          placeholder="Enter or Select Edu Level"
-          dropdownMatchSelectWidth={false}
-          tokenSeparators={[","]}
-          optionFilterProp="value"
-          filterOption={(input, option) =>
-            option?.value?.toLowerCase().includes(input.toLowerCase())
-          }
-          onChange={(value) => {
-            if (value.length > 1) {
-              form.setFieldsValue({ "Education Level": [value[value.length - 1]] });
-            }
-          }}
+                    maxTagCount={1}
+                    style={{ width: '100%' }}
+                    placeholder="Enter or Select Edu Level"
+                    dropdownMatchSelectWidth={false}
+                    tokenSeparators={[","]}
+                    optionFilterProp="value"
+                    filterOption={(input, option) =>
+                      option?.value?.toLowerCase().includes(input.toLowerCase())
+                    }
+                    onChange={(value) => {
+                      if (value.length > 1) {
+                        form.setFieldsValue({ "Education Level": [value[value.length - 1]] });
+                      }
+                    }}
           tagRender={({ label }) => (
             <span style={{ padding: '4px 8px', background: '#ffffff', borderRadius: 4 }}>
               {label}
