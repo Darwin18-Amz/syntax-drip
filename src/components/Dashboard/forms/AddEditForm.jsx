@@ -12,22 +12,27 @@ export default function AddEditForm({
   collegeOptions,
   onCancel,
 }) {
+  const darkDividerStyle = {
+    borderColor: '#222', // dark gray/black
+    borderWidth: 1,
+  };
+
   return (
     <>
-      <Divider>Personal</Divider>
+      <Divider style={darkDividerStyle}>Personal Details</Divider>
       <PersonalSection
         form={form}
         stateOptions={stateOptions}
         collegeOptions={collegeOptions}
       />
 
-      <Divider>Projects</Divider>
+      <Divider style={darkDividerStyle}>Project Details</Divider>
       <ProjectSection />
 
-      <Divider>Presentation</Divider>
+      <Divider style={darkDividerStyle}>Additional Details</Divider>
       <PresentationSection />
 
-      <Divider />
+      <Divider style={darkDividerStyle} />
       <SubmitSection onCancel={onCancel} />
     </>
   );

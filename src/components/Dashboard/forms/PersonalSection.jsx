@@ -1,6 +1,5 @@
 import React from 'react';
-import { Row, Col, Form, Input, Select, DatePicker } from 'antd';
-
+import { Row, Col, Form, Input, Select, DatePicker} from 'antd';
 
 const { Option } = Select;
 const countryCodes = ["+91", "+1", "+44", "+61", "+81", "+49", "+33", "+86", "+7", "+973", /* add more */];
@@ -11,13 +10,12 @@ export default function PersonalSection({ form, stateOptions, collegeOptions }) 
   return (
     <Row gutter={16}>
       <Col span={8}>
-        <Form.Item
-          name="Name"
-          label="Name"
-          rules={[{ required: true}]}
-        >
-           <Input placeholder="Enter Name" />
-        </Form.Item>
+          <Form.Item
+             name="Name"
+             label="Name"
+             rules={[{ required: true }]}>
+             <Input placeholder="Enter Name"/>
+          </Form.Item>
       </Col>
 
       <Col span={8}>
@@ -26,7 +24,7 @@ export default function PersonalSection({ form, stateOptions, collegeOptions }) 
           label="Email ID"
           rules={[{ required: true}]}
         >
-          <Input placeholder="Enter Email ID" />
+          <Input placeholder="Enter Email ID"   />
         </Form.Item>
       </Col>
 
@@ -39,7 +37,7 @@ export default function PersonalSection({ form, stateOptions, collegeOptions }) 
         initialValue="+91"
       >
         <Select
-          style={{ width: '32%' }}
+          style={{ width: '32%'}}
           dropdownMatchSelectWidth={false}
           showSearch
         >
@@ -62,7 +60,7 @@ export default function PersonalSection({ form, stateOptions, collegeOptions }) 
         <Input
           maxLength={10}
           placeholder="Enter Phone Number"
-          style={{ width: '68%' }}
+          style={{ width: '68%'}}
           inputMode="numeric"
           onChange={(e) => {
             const value = e.target.value.replace(/\D/g, '');
@@ -124,7 +122,7 @@ export default function PersonalSection({ form, stateOptions, collegeOptions }) 
                 <Input
                   maxLength={10}
                   placeholder="Enter WhatsApp No."
-                  style={{ width: '68%' }}
+                  style={{ width: '68%'}}
                   disabled={getFieldValue('useSame')}
                   inputMode="numeric"
                   onChange={(e) => {
@@ -159,7 +157,7 @@ export default function PersonalSection({ form, stateOptions, collegeOptions }) 
           rules={[{ required: true }]}
         >
           <DatePicker
-            style={{ width: '100%' }}
+            style={{ width: '100%'}}
             format="DD/MM/YYYY"
             placeholder="Enter or Select Date"
           />
@@ -172,7 +170,6 @@ export default function PersonalSection({ form, stateOptions, collegeOptions }) 
          <Select
            mode="tags"
            maxTagCount={1}
-           style={{ width: '100%' }}
            placeholder="Enter or Select Gender"
            dropdownMatchSelectWidth={false}
            tokenSeparators={[","]}
@@ -205,7 +202,7 @@ export default function PersonalSection({ form, stateOptions, collegeOptions }) 
           <Select
             mode="tags"
             maxTagCount={1}
-            style={{ width: '100%' }}
+            style={{ width: '100%'}}
             placeholder="Enter or Select Clg Name"
             dropdownMatchSelectWidth={false}
             tokenSeparators={[","]}
@@ -732,8 +729,7 @@ export default function PersonalSection({ form, stateOptions, collegeOptions }) 
           rules = {[{required: true}]}>
               <Input.TextArea rows={2}
               placeholder="Enter Address"
-              style={{ resize: 'none' }} />
-
+              style={{ resize: 'none'}} />
           </Form.Item>
       </Col>
 
