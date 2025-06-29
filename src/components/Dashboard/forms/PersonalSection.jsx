@@ -276,8 +276,6 @@ export default function PersonalSection({ form, stateOptions, collegeOptions, de
 
       </Col>
 
-     <Col span={8}>
-
       <Col span={8}>
         <Form.Item name="Degree" label="Degree" rules={[{ required: true }]}>
           <Select
@@ -311,7 +309,6 @@ export default function PersonalSection({ form, stateOptions, collegeOptions, de
         </Form.Item>
       </Col>
 
-      </Col>
       <Col span={8}>
 
             <Form.Item name="Course / Department" label="Course / Department" rules={[{ required: true }]}>
