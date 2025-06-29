@@ -10,30 +10,40 @@ export default function AddEditForm({
   form,
   stateOptions,
   collegeOptions,
-  onCancel,
+  degreeOptions,
+  departmentOptions
 }) {
-  const darkDividerStyle = {
-    borderColor: '#222', // dark gray/black
-    borderWidth: 1,
+  const sectionWrapperStyle = {
+    margin: 0,
+    padding: 0,
+  };
+
+  const dividerStyle = {
+    textAlign: 'left',
+    margin: '16px 0 8px 0',
+    padding: 0,
+    fontWeight: 'bold',
+    fontSize: '16px',
   };
 
   return (
-    <>
-      <Divider style={darkDividerStyle}>Personal Details</Divider>
+    <div style={sectionWrapperStyle}>
+      <Divider orientation="left" plain style={dividerStyle}>Personal Details</Divider>
       <PersonalSection
         form={form}
         stateOptions={stateOptions}
         collegeOptions={collegeOptions}
+        degreeOptions={degreeOptions}
+        departmentOptions={departmentOptions}
       />
 
-      <Divider style={darkDividerStyle}>Project Details</Divider>
-      <ProjectSection />
+      <Divider orientation="left" plain style={dividerStyle}>Project Details</Divider>
+      <ProjectSection form={form} />
 
-      <Divider style={darkDividerStyle}>Additional Details</Divider>
-      <PresentationSection />
+      <Divider orientation="left" plain style={dividerStyle}>Presentation Details</Divider>
+      <PresentationSection form={form} />
 
-      <Divider style={darkDividerStyle} />
-      <SubmitSection onCancel={onCancel} />
-    </>
+      <SubmitSection />
+    </div>
   );
 }

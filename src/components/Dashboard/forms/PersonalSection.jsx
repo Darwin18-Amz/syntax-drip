@@ -5,7 +5,7 @@ const { Option } = Select;
 const countryCodes = ["+91", "+1", "+44", "+61", "+81", "+49", "+33", "+86", "+7", "+973", /* add more */];
 
 
-export default function PersonalSection({ form, stateOptions, collegeOptions }) {
+export default function PersonalSection({ form, stateOptions, collegeOptions, degreeOptions = [], departmentOptions }) {
 
   return (
     <Row gutter={16}>
@@ -233,7 +233,6 @@ export default function PersonalSection({ form, stateOptions, collegeOptions }) 
         </Form.Item>
       </Col>
 
-
       <Col span={8}>
         <Form.Item
           name="College Location"
@@ -279,35 +278,38 @@ export default function PersonalSection({ form, stateOptions, collegeOptions }) 
 
      <Col span={8}>
 
-      <Form.Item name="Degree" label="Degree" rules={[{ required: true }]}>
-        <Select
-          mode="tags"
-          maxTagCount={1}
-          style={{ width: '100%' }}
-          placeholder="Enter or Select Degree"
-          dropdownMatchSelectWidth={false}
-          tokenSeparators={[","]}
-          optionFilterProp="value"
-          filterOption={(input, option) =>
-            option?.value?.toLowerCase().includes(input.toLowerCase())
-          }
-          onChange={(value) => {
-            if (value.length > 1) {
-              form.setFieldsValue({ "Degree": [value[value.length - 1]] });
+      <Col span={8}>
+        <Form.Item name="Degree" label="Degree" rules={[{ required: true }]}>
+          <Select
+            mode="tags"
+            maxTagCount={1}
+            placeholder="Enter or Select Degree"
+            style={{ width: '100%' }}
+            dropdownMatchSelectWidth={false}
+            tokenSeparators={[',']}
+            optionFilterProp="value"
+            filterOption={(input, option) =>
+              option?.value?.toLowerCase().includes(input.toLowerCase())
             }
-          }}
-          tagRender={({ label }) => (
-            <span style={{ padding: '4px 8px', background: '#ffffff', borderRadius: 4 }}>
-              {label}
-            </span>
-          )}
-        >
-          {["B.Tech", "B.E"].map(course => (
-            <Option key={course} value={course}>{course}</Option>
-          ))}
-        </Select>
-      </Form.Item>
-
+            onChange={(value) => {
+              if (value.length > 1) {
+                form.setFieldsValue({ Degree: [value[value.length - 1]] });
+              }
+            }}
+            tagRender={({ label }) => (
+              <span style={{ padding: '4px 8px', background: '#fff', borderRadius: 4 }}>
+                {label}
+              </span>
+            )}
+          >
+            {degreeOptions.map((degree) => (
+              <Option key={degree} value={degree}>
+                {degree}
+              </Option>
+            ))}
+          </Select>
+        </Form.Item>
+      </Col>
 
       </Col>
       <Col span={8}>
@@ -335,12 +337,13 @@ export default function PersonalSection({ form, stateOptions, collegeOptions }) 
                   </span>
                 )}
               >
-                {["B.Tech", "B.E"].map(course => (
-                  <Option key={course} value={course}>{course}</Option>
+                {departmentOptions.map((dept) => (
+                  <Option key={dept} value={dept}>
+                    {dept}
+                  </Option>
                 ))}
               </Select>
             </Form.Item>
-
 
             </Col>
 
