@@ -18,17 +18,15 @@ export default function AddEditForm({
     padding: 0,
   };
 
-  const dividerStyle = {
-    textAlign: 'left',
-    margin: '16px 0 8px 0',
-    padding: 0,
-    fontWeight: 'bold',
-    fontSize: '16px',
-  };
+  const darkDividerStyle = {
+      borderColor: '#222', // dark gray/black
+      borderWidth: 2,
+    };
+
 
   return (
     <div style={sectionWrapperStyle}>
-      <Divider orientation="left" plain style={dividerStyle}>Personal Details</Divider>
+      <Divider style={darkDividerStyle}>Personal Details</Divider>
       <PersonalSection
         form={form}
         stateOptions={stateOptions}
@@ -37,12 +35,13 @@ export default function AddEditForm({
         departmentOptions={departmentOptions}
       />
 
-      <Divider orientation="left" plain style={dividerStyle}>Project Details</Divider>
+      <Divider style={darkDividerStyle}>Project Details</Divider>
       <ProjectSection form={form} />
 
-      <Divider orientation="left" plain style={dividerStyle}>Presentation Details</Divider>
+      <Divider style={darkDividerStyle}>Additional Details</Divider>
       <PresentationSection form={form} />
 
+      <Divider style={darkDividerStyle} />
       <SubmitSection />
     </div>
   );
